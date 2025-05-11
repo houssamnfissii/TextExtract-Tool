@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TextExtract AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        @keyframes pulse-ring {
+            0% { transform: scale(0.8); opacity: 0.5; }
+            100% { transform: scale(1.3); opacity: 0; }
+        }
+
+        .animate-gradient {
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
+        }
+
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .floating {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .pulse-ring::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: inherit;
+            background: inherit;
+            animation: pulse-ring 2s cubic-bezier(0.455, 0.03, 0.515, 0.955) infinite;
+            z-index: -1;
+        }
+
+        .neo-brutalism {
+            box-shadow: 5px 5px 0px rgba(0, 0, 0, 0.8);
+            transform: translate(-2px, -2px);
+            transition: all 0.2s ease;
+        }
+
+        .neo-brutalism:hover {
+            transform: translate(0, 0);
+            box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.8);
+        }
+    </style>
+</head>
+<body class="animate-gradient min-h-screen flex flex-col text-gray-800">
+    <!-- Toast -->
+    <div id="toast" class="fixed top-4 right-4 z-50 transform transition-all duration-500 translate-x-full">
+        <div class="glass-effect px-6 py-3 rounded-xl shadow-lg flex items-center space-x-2">
+            <span id="toast-message" class="text-gray-800"></span>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="glass-effect border-b border-white/20 backdrop-blur-lg">
+        <div class="max-w-6xl mx-auto px-6 py-4">
+            <div class="flex items-center space-x-4">
+                <div class="relative">
+                    <div class="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center text-white font-bold pulse-ring">
+                        AI
+                    </div>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600">
+                        TextExtract AI
+                    </h1>
+                    <p class="text-sm text-gray-600">Next-Gen Content Extraction</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow flex items-center justify-center p-6">
+        <div class="w-full max-w-4xl">
+            <div class="glass-effect rounded-2xl overflow-hidden shadow-2xl">
+                <div class="p-8 border-b border-white/20">
+                    <div class="floating">
+                        <h2 class="text-3xl font-bold mb-2 bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-blue-600">
+                            Extract Web Content
+                        </h2>
+                        <p class="text-gray-600">
+                            Powered by advanced AI technology to extract clean, readable content
+                        </p>
+                    </div>
+                </div>
+
+                <div class="p-8 space-y-8">
+                    <!-- URL Input -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Target URL</label>
+                        <div class="relative">
+                            <div class="flex">
+                                <input
+                                    id="website-url"
+                                    type="text"
+                                    placeholder="Enter website URL..."
+                                    class="flex-grow px-6 py-4 rounded-l-xl bg-white/50 border border-white/30 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300"
+                                />
+                                <button
+                                    id="random-btn"
+                                    class="neo-brutalism bg-black text-white px-6 py-4 rounded-r-xl flex items-center space-x-2"
+                                >
+                                    <span>Random URL</span>
+                                </button>
+                            </div>
+                            <p id="error-message" class="absolute mt-2 text-sm text-red-500 hidden"></p>
+                        </div>
+                    </div>
+
+                    <!-- Extract Button -->
+                    <button
+                        id="extract-btn"
+                        class="neo-brutalism w-full bg-black text-white py-4 px-6 rounded-xl text-lg font-medium"
+                    >
+                        Extract Content
+                    </button>
+
+                    <!-- Results -->
+                    <div id="results-container" class="hidden">
+                        <div class="rounded-xl border border-white/30 overflow-hidden bg-white/50">
+                            <div class="flex justify-between items-center px-6 py-4 bg-black/5 border-b border-white/30">
+                                <h3 class="font-medium">Extracted Content</h3>
+                                <button
+                                    id="copy-btn"
+                                    class="neo-brutalism px-4 py-2 bg-black text-white text-sm rounded-lg flex items-center space-x-2"
+                                >
+                                    <span>Copy</span>
+                                </button>
+                            </div>
+                            <div class="p-6 max-h-[500px] overflow-y-auto">
+                                <pre id="content-display" class="whitespace-pre-wrap font-mono text-sm leading-relaxed"></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="glass-effect border-t border-white/20">
+        <div class="max-w-6xl mx-auto px-6 py-4 text-center">
+            <p class="text-sm text-gray-600">
+                © <span id="current-year"></span> TextExtract AI • Next Generation Web Content Extraction
+            </p>
+        </div>
+    </footer>
+
+<script>
+    // DOM Elements
+    const urlInput = document.getElementById('website-url');
+    const randomBtn = document.getElementById('random-btn');
+    const extractBtn = document.getElementById('extract-btn');
+    const copyBtn = document.getElementById('copy-btn');
+    const errorMessage = document.getElementById('error-message');
+    const resultsContainer = document.getElementById('results-container');
+    const contentDisplay = document.getElementById('content-display');
+    const currentYear = document.getElementById('current-year');
+    const toast = document.getElementById('toast');
+    const toastMessage = document.getElementById('toast-message');
+
+    // Set current year
+    currentYear.textContent = new Date().getFullYear();
+
+    // Sample websites array and daily tracking
+    let sampleWebsites = [];
+    let dailyDomains = [];
+    let lastFetchDate = null;
+
+    // Load domains with CORS handling
+    async function loadDomains() {
+        const today = new Date().toDateString();
+        
+        // If we already fetched domains today and have our daily 200
+        if (lastFetchDate === today && dailyDomains.length >= 200) {
+            return;
+        }
+
+        try {
+            // Try with relative path first
+            let response = await fetch('domains.json', {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                }
+            });
+
+            // If relative path fails, try absolute path
+            if (!response.ok) {
+                response = await fetch('/domains.json', {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    }
+                });
+            }
+
+            if (!response.ok) {
+                throw new Error(`Failed to load domains (${response.status})`);
+            }
+
+            const data = await response.json();
+            sampleWebsites = data;
+            console.log("Loaded domains:", sampleWebsites.length);
+            
+            // Reset daily domains if it's a new day
+            if (lastFetchDate !== today) {
+                dailyDomains = [];
+                lastFetchDate = today;
+            }
+            
+            // Fill dailyDomains with 200 random domains (or all if less than 200)
+            const shuffled = [...sampleWebsites].sort(() => 0.5 - Math.random());
+            dailyDomains = shuffled.slice(0, 200);
+            
+            console.log("Today's domains:", dailyDomains.length);
+        } catch (error) {
+            console.error('Error loading domains:', error);
+            // Fallback sample domains
+            dailyDomains = [
+                'example.com',
+                'wikipedia.org',
+                'github.com',
+                'news.ycombinator.com',
+                'google.com',
+                'youtube.com',
+                'twitter.com',
+                'reddit.com',
+                'amazon.com',
+                'microsoft.com'
+            ];
+            showToast('Using fallback domains');
+        }
+    }
+
+    // Initialize domains
+    loadDomains();
+
+    // Show toast notification
+    function showToast(message, duration = 3000) {
+        toastMessage.textContent = message;
+        toast.classList.remove('translate-x-full');
+        toast.classList.add('translate-x-0');
+        
+        setTimeout(() => {
+            toast.classList.remove('translate-x-0');
+            toast.classList.add('translate-x-full');
+        }, duration);
+    }
+
+    // Random website selection from daily domains
+    randomBtn.addEventListener('click', async () => {
+        randomBtn.disabled = true;
+        randomBtn.innerHTML = `
+            <div class="flex items-center justify-center space-x-2">
+                <div class="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full"></div>
+                <span>Loading...</span>
+            </div>
+        `;
+
+        if (dailyDomains.length === 0) {
+            await loadDomains();
+        }
+        
+        if (dailyDomains.length === 0) {
+            showToast('No domains available');
+            randomBtn.disabled = false;
+            randomBtn.innerHTML = `<span>Random URL</span>`;
+            return;
+        }
+        
+        const randomIndex = Math.floor(Math.random() * dailyDomains.length);
+        urlInput.value = dailyDomains[randomIndex];
+        errorMessage.classList.add('hidden');
+        
+        randomBtn.disabled = false;
+        randomBtn.innerHTML = `<span>Random URL</span>`;
+    });
+
+    // Format URL
+    function formatUrl(inputUrl) {
+        if (!inputUrl.match(/^[a-zA-Z]+:\/\//)) {
+            return `https://${inputUrl}`;
+        }
+        return inputUrl;
+    }
+
+    // Extract button handler
+    extractBtn.addEventListener('click', async () => {
+        const url = urlInput.value.trim();
+        
+        if (!url) {
+            errorMessage.textContent = 'Please enter a URL';
+            errorMessage.classList.remove('hidden');
+            return;
+        }
+
+        // Reset states
+        errorMessage.classList.add('hidden');
+        extractBtn.disabled = true;
+        extractBtn.innerHTML = `
+            <div class="flex items-center justify-center space-x-2">
+                <div class="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full"></div>
+                <span>Processing...</span>
+            </div>
+        `;
+        
+        try {
+            // Simulate API call delay
+            await new Promise(resolve => setTimeout(resolve, 1500));
+            
+            // Generate sample content based on URL
+            const content = generateSampleContent(formatUrl(url));
+            
+            // Display results
+            contentDisplay.textContent = content;
+            resultsContainer.classList.remove('hidden');
+            
+            showToast('Content extracted successfully!');
+        } catch (err) {
+            console.error('Extraction error:', err);
+            errorMessage.textContent = 'Failed to extract content. Please try again.';
+            errorMessage.classList.remove('hidden');
+            showToast('Failed to extract content');
+        } finally {
+            extractBtn.disabled = false;
+            extractBtn.textContent = 'Extract Content';
+        }
+    });
+
+    // Copy button handler
+    copyBtn.addEventListener('click', async () => {
+        try {
+            await navigator.clipboard.writeText(contentDisplay.textContent);
+            copyBtn.innerHTML = `<span>Copied!</span>`;
+            showToast('Content copied to clipboard!');
+            
+            setTimeout(() => {
+                copyBtn.innerHTML = `<span>Copy</span>`;
+            }, 2000);
+        } catch (err) {
+            console.error('Copy failed:', err);
+            showToast('Failed to copy content');
+        }
+    });
+
+    // Generate sample content
+    function generateSampleContent(url) {
+        const cleanUrl = url.replace(/(^\w+:|^)\/\//, '').replace(/\/$/, '');
+        
+        let mainContent = '';
+        if (url.includes('wikipedia')) {
+            mainContent = `Wikipedia is a free online encyclopedia, created and edited by volunteers around the world. 
+
+Articles on Wikipedia follow a neutral point of view and are continually updated as new information becomes available.`;
+        } else if (url.includes('github')) {
+            mainContent = `This repository contains source code and documentation for a software project.
+
+README.md
+---------
+# Project Name
+
+A brief description of what this project does and who it's for.`;
+        } else if (url.includes('news') || url.includes('cnn') || url.includes('bbc')) {
+            mainContent = `BREAKING NEWS
+
+Scientists Discover Revolutionary Technology
+
+By John Smith
+June 15, 2023
+
+Researchers at a leading university have announced a breakthrough in renewable energy technology.`;
+        } else {
+            mainContent = `Welcome to ${cleanUrl}
+
+This website appears to contain various sections including navigation, main content area, and footer.
+
+Sample content would be extracted here using advanced AI algorithms to provide clean, readable text from the webpage.`;
+        }
+
+        return `# Content extracted from ${cleanUrl}
+
+## Main Content
+
+${mainContent}
+
+## Summary
+
+Content has been processed and formatted by TextExtract AI at ${new Date().toLocaleString()}.`;
+    }
+
+    // Periodically check if we need to refresh domains (at midnight)
+    setInterval(() => {
+        const now = new Date();
+        if (now.getHours() === 0 && now.getMinutes() === 0) {
+            loadDomains();
+        }
+    }, 60000); // Check every minute
+</script>
+</body>
+</html>

@@ -1,0 +1,1151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TextExtract AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Force scrollability */
+html, body {
+    overflow-y: auto !important;
+    height: auto !important;
+}
+
+/* Ensure main content doesn’t restrict height */
+main {
+    min-height: auto;
+}
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        @keyframes pulse-ring {
+            0% { transform: scale(0.8); opacity: 0.5; }
+            100% { transform: scale(1.3); opacity: 0; }
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes slideOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
+
+        @keyframes progress {
+            0% { width: 100%; }
+            100% { width: 0%; }
+        }
+
+        @keyframes twinkle {
+            0% { opacity: 0.2; }
+            50% { opacity: 1; }
+            100% { opacity: 0.2; }
+        }
+
+        .animate-stars {
+            background: linear-gradient(to bottom, #0f0c29, #302b63, #24243e);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .star {
+            position: absolute;
+            background-color: #fff;
+            border-radius: 50%;
+            animation: twinkle 3s infinite;
+        }
+
+        .star:nth-child(3n) {
+            background-color: #ffd700;
+        }
+        .star:nth-child(3n+1) {
+            background-color: #87ceeb;
+        }
+        .star:nth-child(3n+2) {
+            background-color: #ffffff;
+        }
+
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .floating {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .pulse-ring::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: inherit;
+            background: inherit;
+            animation: pulse-ring 2s cubic-bezier(0.455, 0.03, 0.515, 0.955) infinite;
+            z-index: -1;
+        }
+
+        .neo-brutalism {
+            box-shadow: 5px 5px 0px rgba(0, 0, 0, 0.8);
+            transform: translate(-2px, -2px);
+            transition: all 0.2s ease;
+        }
+
+        .neo-brutalism:hover {
+            transform: translate(0, 0);
+            box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.8);
+        }
+
+        .toast {
+            animation: slideIn 0.3s forwards, slideOut 0.3s forwards 2.7s;
+        }
+
+        .toast-success {
+            background: rgba(16, 185, 129, 0.9);
+        }
+
+        .toast-error {
+            background: rgba(239, 68, 68, 0.9);
+        }
+
+        .toast-warning {
+            background: rgba(245, 158, 11, 0.9);
+        }
+
+        .toast-info {
+            background: rgba(59, 130, 246, 0.9);
+        }
+
+        .progress-bar {
+            height: 4px;
+            animation: progress 3s linear forwards;
+        }
+
+        .content-fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 640px) {
+            .input-group {
+                flex-direction: column;
+            }
+            .input-group input {
+                border-radius: 0.75rem !important;
+                border-bottom-right-radius: 0 !important;
+                border-bottom-left-radius: 0 !important;
+            }
+            .input-group button {
+                border-radius: 0 !important;
+                border-bottom-right-radius: 0.75rem !important;
+                border-bottom-left-radius: 0.75rem !important;
+            }
+        }
+    </style>
+</head>
+<body class="animate-stars min-h-screen flex flex-col text-white">
+    <!-- Stars Background -->
+    <div id="stars-container" class="fixed inset-0 z-0"></div>
+
+    <!-- Toast Container -->
+    <div id="toast-container" class="fixed top-4 right-4 z-50 space-y-2 w-full max-w-xs"></div>
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
+        <div class="glass-effect p-8 rounded-2xl shadow-2xl max-w-md w-full mx-4">
+            <div class="flex flex-col items-center space-y-4">
+                <div class="relative">
+                    <div class="w-16 h-16 bg-blue-600 rounded-xl flex items-center justify-center text-white font-bold pulse-ring">
+                        <i class="fas fa-spinner fa-spin text-2xl"></i>
+                    </div>
+                </div>
+                <h3 class="text-xl font-bold">Processing Content</h3>
+                <p class="text-center text-gray-200">Analyzing webpage structure and extracting content...</p>
+                <div class="w-full bg-gray-700 rounded-full h-2.5">
+                    <div id="progress-bar" class="bg-blue-500 h-2.5 rounded-full" style="width: 0%"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="glass-effect border-b border-white/20 backdrop-blur-lg z-10">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <div class="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center text-white font-bold pulse-ring">
+                            <i class="fas fa-robot text-xl"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <h1 class="text-xl sm:text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-400">
+                            TextExtract AI
+                        </h1>
+                        <p class="text-xs sm:text-sm text-gray-300">Next-Gen Content Extraction</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="#" class="text-gray-300 hover:text-white transition-colors">
+                        <i class="fas fa-question-circle text-xl"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow flex items-center justify-center p-4 sm:p-6 relative z-10">
+        <div class="w-full max-w-4xl">
+            <div class="glass-effect rounded-2xl overflow-hidden shadow-2xl">
+                <div class="p-6 sm:p-8 border-b border-white/20">
+                    <div class="floating">
+                        <h2 class="text-2xl sm:text-3xl font-bold mb-2 bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-blue-400">
+                            Extract Web Content
+                        </h2>
+                        <p class="text-sm sm:text-base text-gray-300">
+                            Powered by advanced AI technology to extract clean, readable content
+                        </p>
+                    </div>
+                </div>
+
+                <div class="p-6 sm:p-8 space-y-6 sm:space-y-8">
+                    <!-- URL Input -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Target URL</label>
+                        <div class="relative">
+                            <div class="flex flex-col sm:flex-row input-group">
+                                <input
+                                    id="website-url"
+                                    type="text"
+                                    placeholder="Enter website URL (e.g., https://example.com)"
+                                    class="flex-grow px-4 sm:px-6 py-3 sm:py-4 rounded-t-xl sm:rounded-l-xl sm:rounded-tr-none bg-white/10 border border-white/30 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300 text-white placeholder-gray-400"
+                                />
+                                <button
+                                    id="random-btn"
+                                    class="neo-brutalism bg-blue-600 hover:bg-blue-700 text-white px-4 sm:px-6 py-3 sm:py-4 rounded-b-xl sm:rounded-r-xl sm:rounded-bl-none flex items-center justify-center space-x-2 transition-colors"
+                                >
+                                    <i class="fas fa-random"></i>
+                                    <span class="hidden sm:inline">Random URL</span>
+                                </button>
+                            </div>
+                            <p id="error-message" class="absolute mt-2 text-sm text-red-400 hidden"></p>
+                        </div>
+                    </div>
+
+                    <!-- Extract Button -->
+                    <button
+                        id="extract-btn"
+                        class="neo-brutalism w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white py-3 sm:py-4 px-6 rounded-xl text-lg font-medium flex items-center justify-center space-x-2 transition-all"
+                    >
+                        <i class="fas fa-bolt"></i>
+                        <span>Extract Content</span>
+                    </button>
+
+                    <!-- Results -->
+                    <div id="results-container" class="hidden content-fade-in">
+                        <div class="rounded-xl border border-white/30 overflow-hidden bg-white/10">
+                            <div class="flex justify-between items-center px-4 sm:px-6 py-3 bg-black/10 border-b border-white/30">
+                                <h3 class="font-medium flex items-center space-x-2">
+                                    <i class="fas fa-file-alt"></i>
+                                    <span>Extracted Content</span>
+                                </h3>
+                                <div class="flex space-x-2">
+                                    <button
+                                        id="download-btn"
+                                        class="neo-brutalism px-3 sm:px-4 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg flex items-center space-x-1 transition-colors"
+                                    >
+                                        <i class="fas fa-download"></i>
+                                        <span class="hidden sm:inline">Download</span>
+                                    </button>
+                                    <button
+                                        id="copy-btn"
+                                        class="neo-brutalism px-3 sm:px-4 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg flex items-center space-x-1 transition-colors"
+                                    >
+                                        <i class="fas fa-copy"></i>
+                                        <span class="hidden sm:inline">Copy</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="p-4 sm:p-6 max-h-[500px] overflow-y-auto">
+                                <pre id="content-display" class="whitespace-pre-wrap font-mono text-sm leading-relaxed text-gray-200"></pre>
+                            </div>
+                            <div class="px-4 sm:px-6 py-3 bg-black/10 border-t border-white/30 text-xs text-gray-400 flex justify-between items-center">
+                                <div id="content-stats" class="flex items-center space-x-4">
+                                    <span><i class="fas fa-clock"></i> Processed in 1.4s</span>
+                                    <span><i class="fas fa-file-word"></i> 342 words</span>
+                                    <span><i class="fas fa-paragraph"></i> 5 paragraphs</span>
+                                </div>
+                                <button id="clear-btn" class="text-red-400 hover:text-red-300">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="glass-effect border-t border-white/20 z-10">
+        <div class="max-w-6xl mx-auto px-6 py-4 text-center">
+            <div class="flex flex-col sm:flex-row justify-center items-center space-y-2 sm:space-y-0 sm:space-x-4">
+                <p class="text-sm text-gray-300">
+                    © <span id="current-year"></span> TextExtract AI
+                </p>
+                <div class="hidden sm:block text-gray-500">•</div>
+              <div class="flex space-x-4 text-sm text-gray-300">
+              <a href="https://github.com/houssamnfissii" class="hover:text-white" target="_blank" rel="noopener noreferrer">Made By    <span class="hover:text-white hover:underline underline-offset-4 cursor-default"><i class="fas fa-code"></i> Houssam nfissi</span></a>
+ 
+</div>
+
+
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Create stars
+        function createStars() {
+            const container = document.getElementById('stars-container');
+            const count = 100;
+            
+            for (let i = 0; i < count; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                
+                // Random size between 1-3px
+                const size = Math.random() * 2 + 1;
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                
+                // Random position
+                star.style.left = `${Math.random() * 100}%`;
+                star.style.top = `${Math.random() * 100}%`;
+                
+                // Random animation duration
+                star.style.animationDuration = `${Math.random() * 2 + 3}s`;
+                star.style.animationDelay = `${Math.random() * 2}s`;
+                
+                container.appendChild(star);
+            }
+        }
+
+        // Sample websites
+        const sampleWebsites = [
+            "trendmicro.com",
+    "samsung.com",
+    "cisco.com",
+    "honeywell.com",
+    "panasonic.com",
+    "asics.com",
+    "westernunion.com",
+    "jpmorgan.com",
+    "ibm.com",
+    "salesforce.com",
+    "aetna.com",
+    "siemens.com",
+    "vmware.com",
+    "dell.com",
+    "stryker.com",
+    "pearson.com",
+    "accenture.com",
+    "mckinsey.com",
+    "bankofamerica.com",
+    "lenovo.com",
+    "juniper.net",
+    "deloitte.com",
+    "kpmg.com",
+    "walmart.com",
+    "thomsonreuters.com",
+    "fujitsu.com",
+    "philips.com",
+    "rockwellautomation.com",
+    "verizon.com",
+    "qantas.com",
+    "deluxe.com",
+    "ups.com",
+    "akamai.com",
+    "ironmountain.com",
+    "marriott.com",
+    "nvidia.com",
+    "telstra.com.au",
+    "spglobal.com",
+    "spark.co.nz",
+    "equinix.com",
+    "ubs.com",
+    "grundfos.com",
+    "medtronic.com",
+    "bt.com",
+    "deere.com",
+    "eni.com",
+    "kia.com",
+    "insight.com",
+    "citrix.com",
+    "autodesk.com",
+    "sap.com",
+    "nba.com",
+    "graco.com",
+    "mastercard.com",
+    "abbvie.com",
+    "gehealthcare.com",
+    "dhl.com",
+    "ihg.com",
+    "keysight.com",
+    "cognizant.com",
+    "informatica.com",
+    "optus.com.au",
+    "medallia.com",
+    "ferrari.com",
+    "lego.com",
+    "marsh.com",
+    "lg.com",
+    "hyundai.com",
+    "emerson.com",
+    "hrblock.com",
+    "arrow.com",
+    "agilent.com",
+    "bostonscientific.com",
+    "harley-davidson.com",
+    "adp.com",
+    "fujifilm.com",
+    "yokogawa.com",
+    "prudential.com",
+    "zebra.com",
+    "fortinet.com",
+    "trimble.com",
+    "jcpenney.com",
+    "salesloft.com",
+    "carters.com",
+    "jeppesen.com",
+    "fiserv.com",
+    "woolworths.com.au",
+    "underarmour.com",
+    "g4s.com",
+    "comcast.com",
+    "tommy.com",
+    "bullhorn.com",
+    "staples.com",
+    "basf.com",
+    "hpe.com",
+    "vonage.com",
+    "nokia.com",
+    "roche.com",
+    "motorolasolutions.com",
+    "snowflake.com",
+    "canadiantire.ca",
+    "grainger.com",
+    "americanexpress.com",
+    "t-mobile.com",
+    "fedex.com",
+    "dyson.com",
+    "teradata.com",
+    "mheducation.com",
+    "webex.com",
+    "nutanix.com",
+    "kohler.com",
+    "chubb.com",
+    "ford.com",
+    "ringcentral.com",
+    "american.edu",
+    "bmw.com",
+    "kaiserpermanente.org",
+    "coles.com.au",
+    "wsj.com",
+    "aarp.org",
+    "synopsys.com",
+    "fresenius-kabi.com",
+    "wiley.com",
+    "atlassian.com",
+    "citi.com",
+    "infor.com",
+    "netapp.com",
+    "patagonia.com",
+    "anaplan.com",
+    "abercrombie.com",
+    "ikea.com",
+    "tibco.com",
+    "linode.com",
+    "usbank.com",
+    "logitech.com",
+    "adt.com",
+    "nttdata.com",
+    "illumina.com",
+    "kohls.com",
+    "enterprise.com",
+    "telstra.com",
+    "chase.com",
+    "splunk.com",
+    "realtor.com",
+    "sony.com",
+    "coach.com",
+    "dnb.com",
+    "dxc.com",
+    "kornferry.com",
+    "churchofjesuschrist.org",
+    "singtel.com",
+    "bmo.com",
+    "8x8.com",
+    "campaignmonitor.com",
+    "takeda.com",
+    "hilton.com",
+    "troweprice.com",
+    "f5.com",
+    "danfoss.com",
+    "ansell.com",
+    "smu.edu",
+    "gsk.com",
+    "ryder.com",
+    "gigamon.com",
+    "bd.com",
+    "shimano.com",
+    "southwest.com",
+    "scania.com",
+    "travelers.com",
+    "connectwise.com",
+    "amadeus.com",
+    "leica-geosystems.com",
+    "bcg.com",
+    "astrazeneca.com",
+    "refinitiv.com",
+    "sky.com",
+    "tyro.com",
+    "anz.com",
+    "uber.com",
+    "lhh.com",
+    "homedepot.com",
+    "sydney.edu.au",
+    "questdiagnostics.com",
+    "aon.com",
+    "qiagen.com",
+    "opentext.com",
+    "ou.edu",
+    "wolterskluwer.com",
+    "solarwinds.com",
+    "appdynamics.com",
+    "boeing.com",
+    "mayoclinic.org",
+    "celonis.com",
+    "pwc.com",
+    "dentsplysirona.com",
+    "avast.com",
+    "northerntrust.com",
+    "taylor.com",
+    "amplifon.com",
+    "cummins.com",
+    "productboard.com",
+    "progressive.com",
+    "canon.com.au",
+    "humana.com",
+    "citizensbank.com",
+    "avalara.com",
+    "dsm.com",
+    "pentair.com",
+    "averydennison.com",
+    "boq.com.au",
+    "netsuite.com",
+    "servicenow.com",
+    "wyndhamhotels.com",
+    "wipro.com",
+    "cat.com",
+    "uscellular.com",
+    "sealedair.com",
+    "bestwestern.com",
+    "doterra.com",
+    "amp.com.au",
+    "aia.com.au",
+    "atlascopco.com",
+    "motorola.com",
+    "steelcase.com",
+    "statestreet.com",
+    "vestas.com",
+    "kerry.com",
+    "veeam.com",
+    "cvent.com",
+    "gehealthcare.com.au",
+    "mattel.com",
+    "automationanywhere.com",
+    "lexisnexis.com",
+    "vertiv.com",
+    "sangoma.com",
+    "delta.com",
+    "sherwin-williams.com",
+    "techdata.com",
+    "unisys.com",
+    "esri.com",
+    "eset.com",
+    "kaspersky.com",
+    "sgs.com",
+    "walgreens.com",
+    "elsevier.com",
+    "rioseo.com",
+    "nike.com",
+    "tzpmdyf.com",
+    "morningstar.com",
+    "in.gov",
+    "brp.com",
+    "dematic.com",
+    "credit-suisse.com",
+    "druva.com",
+    "rmit.edu.au",
+    "racv.com.au",
+    "changehealthcare.com",
+    "rei.com",
+    "thoughtworks.com",
+    "cfainstitute.org",
+    "newyorklife.com",
+    "viasat.com",
+    "brenntag.com",
+    "deakin.edu.au",
+    "optimizely.com",
+    "xero.com",
+    "bassproboatingcenters.com",
+    "ieee.org",
+    "puma.com",
+    "eaton.com",
+    "barcelo.com",
+    "internationalsos.com",
+    "whirlpool.com",
+    "bell.ca",
+    "westconcomstor.com",
+    "morganstanley.com",
+    "straumann.com",
+    "pnc.com",
+    "auburn.edu",
+    "sharecare.com",
+    "grantthornton.com.au",
+    "csu.edu.au",
+    "marksandspencer.com",
+    "jbhifi.com.au",
+    "omron.com",
+    "shutterstock.com",
+    "k12.com",
+    "swarovski.com",
+    "doda.jp",
+    "scotiabank.com",
+    "lululemon.com",
+    "xerox.com",
+    "cvs.com",
+    "mobify-storefront.com",
+    "aetnamedicare.com",
+    "massmutual.com",
+    "infosys.com",
+    "kpn.com",
+    "ni.com",
+    "ally.com",
+    "betterworks.com",
+    "lennar.com",
+    "parker.com",
+    "choicehotels.com",
+    "asana.com",
+    "blackrock.com",
+    "dormakaba.com",
+    "europcar.com",
+    "centurylink.com",
+    "mediaroom.com",
+    "kcprofessional.com",
+    "aveva.com",
+    "dupont.com",
+    "blackthorn.io",
+    "assaabloy.com",
+    "arm.com",
+    "mattermost.com",
+    "bakerhughes.com",
+    "vans.com",
+    "resmed.com",
+    "web.com",
+    "murata.com",
+    "wn.com",
+    "chrobinson.com",
+    "buhlergroup.com",
+    "vueling.com",
+    "verkada.com",
+    "siteone.com",
+    "texas.gov",
+    "nab.com.au",
+    "sonos.com",
+    "micron.com",
+    "thermofisher.com",
+    "fidelity.com",
+    "mckesson.com",
+    "elastic.co",
+    "mercer.com",
+    "molex.com",
+    "hsbc.com.hk",
+    "uhc.com",
+    "thalesgroup.com",
+    "landsend.com",
+    "vizio.com",
+    "storaenso.com",
+    "merkle.com",
+    "qlik.com",
+    "ge.com",
+    "illinois.gov",
+    "ticketmaster.com",
+    "thoughtspot.com",
+    "libertymutual.com",
+    "pitneybowes.com",
+    "chanel.com",
+    "analog.com",
+    "macquarie.com",
+    "spectrum.com",
+    "buffalo.edu",
+    "ameriprise.com",
+    "ee.co.uk",
+    "insightsoftware.com",
+    "johnsoncontrols.com",
+    "nasdaq.com",
+    "paypal.com",
+    "jll.com",
+    "unbounce.com",
+    "miamioh.edu",
+    "bitdefender.com",
+    "wnba.com",
+    "veritone.com",
+    "cedars-sinai.org",
+    "registria.com",
+    "bazaarvoice.com",
+    "phonak.com",
+    "bayer.com",
+    "samsclub.com",
+    "aryaka.com",
+    "malaysiaairlines.com",
+    "relativity.com",
+    "zeiss.com",
+    "okta.com",
+    "parallels.com",
+    "avanade.com",
+    "basspro.com",
+    "enterprisecarshare.com",
+    "bcbstx.com",
+    "onepeloton.com",
+    "fnz.com",
+    "bms.com",
+    "redbull.com",
+    "booking.com",
+    "hillspet.com",
+    "huawei.com",
+    "experian.com",
+    "munichre.com",
+    "kaseya.com",
+    "proximus.be",
+    "staplesadvantage.com",
+    "scotts.com",
+    "mcafee.com",
+    "codesports.com.au",
+    "mercurymarine.com",
+    "directv.com",
+    "ft.com",
+    "cengage.com",
+    "mulesoft.com",
+    "removed",
+    "st.com",
+    "cathaypacific.com",
+    "octanner.com",
+    "grifols.com",
+    "docusign.com",
+    "forbes.com",
+    "procore.com",
+    "constellation.com",
+    "fastcompany.com",
+    "leidos.com",
+    "verygoodsecurity.com",
+    "svb.com",
+    "cardinalhealth.com",
+    "purestorage.com",
+    "novartis.com",
+    "cochlear.com",
+    "hsbc.com",
+    "cpanel.net",
+    "afterpay.com",
+    "sweatybetty.com",
+    "recruit.co.jp",
+    "securitymetrics.com",
+    "fisglobal.com",
+    "sierrawireless.com",
+    "intel.com",
+    "snowsoftware.com",
+    "tivo.com",
+    "volusion.com",
+    "capella.edu",
+    "thebodyshop.com",
+    "act.org",
+    "stantec.com",
+    "allinahealthaetnamedicare.com",
+    "orange-business.com",
+    "royalcanin.com",
+    "genesis.com",
+    "bouyguestelecom.fr",
+    "news.com.au",
+    "q2.com",
+    "irobot.com",
+    "alaskaair.com",
+    "liveclicker.com",
+    "gartner.com",
+    "originenergy.com.au",
+    "gehealthcare.co.jp",
+    "softwareone.com",
+    "lpl.com",
+    "barco.com",
+    "weber.com",
+    "toyota.com",
+    "bayliner.com",
+    "bcbsil.com",
+    "gehealthcare.ca",
+    "proquest.com",
+    "supermicro.com",
+    "bcbsmt.com",
+    "nbcuni.com",
+    "hydro.com",
+    "accor.com",
+    "aroma360.com",
+    "commscope.com",
+    "macquarietelecom.com",
+    "aig.com",
+    "xsolla.com",
+    "jostens.com",
+    "experian.co.uk",
+    "schindler.com",
+    "breville.com",
+    "weedmaps.com",
+    "pwc.com.au",
+    "barracuda.com",
+    "nationalcar.com",
+    "realpage.com",
+    "bill.com",
+    "andritz.com",
+    "sciencelogic.com",
+    "foxtel.com.au",
+    "telus.com",
+    "mufg.jp",
+    "aa.com",
+    "surepayroll.com",
+    "kddi.com",
+    "digicert.com",
+    "telenet.be",
+    "gmocloud.com",
+    "slb.com",
+    "dialpad.com",
+    "covestro.com",
+    "rocketsoftware.com",
+    "crownpeak.com",
+    "se.com",
+    "kipling-usa.com",
+    "microchip.com",
+        ];
+
+        // DOM Elements
+        const urlInput = document.getElementById('website-url');
+        const randomBtn = document.getElementById('random-btn');
+        const extractBtn = document.getElementById('extract-btn');
+        const copyBtn = document.getElementById('copy-btn');
+        const downloadBtn = document.getElementById('download-btn');
+        const clearBtn = document.getElementById('clear-btn');
+        const errorMessage = document.getElementById('error-message');
+        const resultsContainer = document.getElementById('results-container');
+        const contentDisplay = document.getElementById('content-display');
+        const currentYear = document.getElementById('current-year');
+        const toastContainer = document.getElementById('toast-container');
+        const loadingOverlay = document.getElementById('loading-overlay');
+        const progressBar = document.getElementById('progress-bar');
+
+        // Initialize
+        createStars();
+        currentYear.textContent = new Date().getFullYear();
+
+        // Show toast notification
+        function showToast(message, type = 'info', duration = 3000) {
+            const toast = document.createElement('div');
+            toast.className = `toast glass-effect px-4 py-3 rounded-lg shadow-lg flex items-start space-x-3 ${type ? 'toast-' + type : ''}`;
+            
+            let icon;
+            switch(type) {
+                case 'success':
+                    icon = '<i class="fas fa-check-circle text-white"></i>';
+                    break;
+                case 'error':
+                    icon = '<i class="fas fa-exclamation-circle text-white"></i>';
+                    break;
+                case 'warning':
+                    icon = '<i class="fas fa-exclamation-triangle text-white"></i>';
+                    break;
+                default:
+                    icon = '<i class="fas fa-info-circle text-white"></i>';
+            }
+            
+            toast.innerHTML = `
+                ${icon}
+                <div class="flex-1 text-white">
+                    <p class="text-sm font-medium">${message}</p>
+                </div>
+                <div class="absolute bottom-0 left-0 right-0 h-1 bg-white/30">
+                    <div class="progress-bar h-full ${type === 'success' ? 'bg-green-200' : type === 'error' ? 'bg-red-200' : type === 'warning' ? 'bg-yellow-200' : 'bg-blue-200'}"></div>
+                </div>
+            `;
+            
+            toastContainer.appendChild(toast);
+            
+            // Remove toast after animation
+            setTimeout(() => {
+                toast.remove();
+            }, duration);
+        }
+
+        // Random website selection
+        randomBtn.addEventListener('click', () => {
+            const randomIndex = Math.floor(Math.random() * sampleWebsites.length);
+            urlInput.value = sampleWebsites[randomIndex];
+            errorMessage.classList.add('hidden');
+            showToast('Random URL generated', 'success');
+        });
+
+        // Format URL
+        function formatUrl(inputUrl) {
+            if (!inputUrl.match(/^[a-zA-Z]+:\/\//)) {
+                return `https://${inputUrl}`;
+            }
+            return inputUrl;
+        }
+
+        // Generate sample content
+        function generateSampleContent(url) {
+            const cleanUrl = url.replace(/(^\w+:|^)\/\//, '').replace(/\/$/, '');
+            
+            let mainContent = '';
+            if (url.includes('wikipedia')) {
+                mainContent = `Wikipedia is a free online encyclopedia, created and edited by volunteers around the world. 
+
+Articles on Wikipedia follow a neutral point of view and are continually updated as new information becomes available.
+
+Example Article:
+----------------
+Artificial Intelligence
+
+Artificial intelligence (AI) is intelligence demonstrated by machines, as opposed to the natural intelligence displayed by animals including humans.`;
+            } else if (url.includes('github')) {
+                mainContent = `This repository contains source code and documentation for a software project.
+
+README.md
+---------
+# Project Name
+
+A brief description of what this project does and who it's for.
+
+Features
+--------
+- Feature 1: Does something cool
+- Feature 2: Does something even cooler
+
+Installation
+------------
+\`\`\`bash
+npm install project-name
+\`\`\``;
+            } else if (url.includes('news') || url.includes('cnn') || url.includes('bbc')) {
+                mainContent = `BREAKING NEWS
+
+Scientists Discover Revolutionary Technology
+
+By John Smith
+June 15, 2023
+
+Researchers at a leading university have announced a breakthrough in renewable energy technology that could potentially solve the world's energy crisis.
+
+Key Points:
+- New solar panel design achieves 45% efficiency
+- Production costs reduced by 60%
+- Scalable to industrial applications within 2 years`;
+            } else {
+                mainContent = `Main Content from ${cleanUrl}
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+
+The website appears to have sections for navigation, article content, and footer links.
+
+Key Sections:
+1. Header with navigation menu
+2. Main article content area
+3. Sidebar with related links
+4. Footer with copyright information`;
+            }
+
+            return `# Content extracted from ${cleanUrl}
+
+## Main Content
+
+${mainContent}
+
+## Summary
+
+Content has been processed and formatted by TextExtract AI.
+
+Extraction Details:
+- Date: ${new Date().toLocaleString()}
+- Content Type: Article
+- Language: English
+- Word Count: ${Math.floor(Math.random() * 200) + 200}`;
+        }
+
+        // Simulate progress
+        function simulateProgress() {
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += Math.random() * 10;
+                progressBar.style.width = `${Math.min(progress, 100)}%`;
+                
+                if (progress >= 100) {
+                    clearInterval(interval);
+                }
+            }, 200);
+        }
+
+        // Extract button handler
+    // Extract button handler - WORKING IMPLEMENTATION
+        extractBtn.addEventListener('click', async () => {
+            const url = urlInput.value.trim();
+            
+            if (!url) {
+                errorMessage.textContent = 'Please enter a URL';
+                errorMessage.classList.remove('hidden');
+                showToast('Please enter a URL', 'error');
+                return;
+            }
+
+            // Validate URL format
+            if (!url.match(/^(https?:\/\/)?([\w-]+\.)+[\w-]+(\/[\w- .\/?%&=]*)?$/)) {
+                errorMessage.textContent = 'Please enter a valid URL';
+                errorMessage.classList.remove('hidden');
+                showToast('Invalid URL format', 'error');
+                return;
+            }
+
+            // Reset states
+            errorMessage.classList.add('hidden');
+            extractBtn.disabled = true;
+            extractBtn.innerHTML = `
+                <div class="flex items-center justify-center space-x-2">
+                    <div class="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full"></div>
+                    <span>Processing...</span>
+                </div>
+            `;
+            
+            // Show loading overlay
+            loadingOverlay.classList.remove('hidden');
+            simulateProgress();
+            
+            try {
+                // Format URL properly
+                const formattedUrl = url.startsWith('http') ? url : `https://${url}`;
+                
+                // Make API call to our Flask backend
+                const response = await fetch('http://localhost:5000/extract', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ url: formattedUrl })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    contentDisplay.textContent = data.content;
+                    
+                    // Update stats
+                    document.getElementById('content-stats').innerHTML = `
+                        <span><i class="fas fa-clock"></i> Processed in ${data.processing_time.toFixed(2)}s</span>
+                        <span><i class="fas fa-file-word"></i> ${data.word_count} words</span>
+                        <span><i class="fas fa-paragraph"></i> ${(data.content.match(/\n\s*\n/g) || []).length + 1} paragraphs</span>
+                    `;
+                    
+                    resultsContainer.classList.remove('hidden');
+                    resultsContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    showToast('Content extracted successfully!', 'success');
+                } else {
+                    throw new Error(data.error || 'Failed to extract content');
+                }
+            } catch (err) {
+                console.error('Extraction error:', err);
+                errorMessage.textContent = err.message.includes('Failed to fetch') ? 
+                    'Failed to connect to the server.' : 
+                    err.message;
+                errorMessage.classList.remove('hidden');
+                showToast(errorMessage.textContent, 'error');
+            } finally {
+                extractBtn.disabled = false;
+                extractBtn.innerHTML = `
+                    <i class="fas fa-bolt"></i>
+                    <span>Extract Content</span>
+                `;
+                loadingOverlay.classList.add('hidden');
+                progressBar.style.width = '0%';
+            }
+        });
+        // Copy button handler
+        copyBtn.addEventListener('click', async () => {
+            try {
+                await navigator.clipboard.writeText(contentDisplay.textContent);
+                copyBtn.innerHTML = `<i class="fas fa-check"></i><span class="hidden sm:inline">Copied!</span>`;
+                showToast('Content copied to clipboard!', 'success');
+                
+                setTimeout(() => {
+                    copyBtn.innerHTML = `<i class="fas fa-copy"></i><span class="hidden sm:inline">Copy</span>`;
+                }, 2000);
+            } catch (err) {
+                showToast('Failed to copy content', 'error');
+            }
+        });
+
+        // Download button handler
+        downloadBtn.addEventListener('click', () => {
+            const blob = new Blob([contentDisplay.textContent], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `extracted-content-${new Date().toISOString().slice(0,10)}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showToast('Download started', 'success');
+        });
+
+        // Clear button handler
+        clearBtn.addEventListener('click', () => {
+            resultsContainer.classList.add('hidden');
+            urlInput.value = '';
+            showToast('Results cleared', 'info');
+        });
+
+        // Validate URL on input
+        urlInput.addEventListener('input', () => {
+            const url = urlInput.value.trim();
+            if (url && !url.match(/^(https?:\/\/)?([\w-]+\.)+[\w-]+(\/[\w- .\/?%&=]*)?$/)) {
+                errorMessage.textContent = 'Please enter a valid URL';
+                errorMessage.classList.remove('hidden');
+            } else {
+                errorMessage.classList.add('hidden');
+            }
+        });
+    </script>
+</body>
+</html>
