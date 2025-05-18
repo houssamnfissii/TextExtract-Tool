@@ -2,74 +2,75 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TextExtract AI</title>
-
-  <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- Font Awesome -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-  <!-- Favicon -->
-<link rel="icon" type="image/svg+xml" href="./images/icon.svg">
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WMN5 Tools</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="./images/icon.svg">
+    
     <style>
         /* Force scrollability */
-html, body {
-    overflow-y: auto !important;
-    height: auto !important;
-}
-
-/* Ensure main content doesn’t restrict height */
-main {
-    min-height: auto;
-}
+        html, body {
+            overflow-y: auto !important;
+            height: auto !important;
+        }
+        
+        /* Ensure main content doesn't restrict height */
+        main {
+            min-height: auto;
+        }
+        
         @keyframes float {
             0% { transform: translateY(0px); }
             50% { transform: translateY(-10px); }
             100% { transform: translateY(0px); }
         }
-
+        
         @keyframes pulse-ring {
             0% { transform: scale(0.8); opacity: 0.5; }
             100% { transform: scale(1.3); opacity: 0; }
         }
-
+        
         @keyframes slideIn {
             from { transform: translateX(100%); opacity: 0; }
             to { transform: translateX(0); opacity: 1; }
         }
-
+        
         @keyframes slideOut {
             from { transform: translateX(0); opacity: 1; }
             to { transform: translateX(100%); opacity: 0; }
         }
-
+        
         @keyframes progress {
             0% { width: 100%; }
             100% { width: 0%; }
         }
-
+        
         @keyframes twinkle {
             0% { opacity: 0.2; }
             50% { opacity: 1; }
             100% { opacity: 0.2; }
         }
-
+        
         .animate-stars {
             background: linear-gradient(to bottom, #0f0c29, #302b63, #24243e);
             position: relative;
             overflow: hidden;
         }
-
+        
         .star {
             position: absolute;
             background-color: #fff;
             border-radius: 50%;
             animation: twinkle 3s infinite;
         }
-
+        
         .star:nth-child(3n) {
             background-color: #ffd700;
         }
@@ -79,17 +80,17 @@ main {
         .star:nth-child(3n+2) {
             background-color: #ffffff;
         }
-
+        
         .glass-effect {
             background: rgba(255, 255, 255, 0.15);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
-
+        
         .floating {
             animation: float 6s ease-in-out infinite;
         }
-
+        
         .pulse-ring::before {
             content: '';
             position: absolute;
@@ -100,52 +101,223 @@ main {
             animation: pulse-ring 2s cubic-bezier(0.455, 0.03, 0.515, 0.955) infinite;
             z-index: -1;
         }
-
+        
         .neo-brutalism {
             box-shadow: 5px 5px 0px rgba(0, 0, 0, 0.8);
             transform: translate(-2px, -2px);
             transition: all 0.2s ease;
         }
-
+        
         .neo-brutalism:hover {
             transform: translate(0, 0);
             box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.8);
         }
-
+        
         .toast {
             animation: slideIn 0.3s forwards, slideOut 0.3s forwards 2.7s;
         }
-
+        
         .toast-success {
             background: rgba(16, 185, 129, 0.9);
         }
-
+        
         .toast-error {
             background: rgba(239, 68, 68, 0.9);
         }
-
+        
         .toast-warning {
             background: rgba(245, 158, 11, 0.9);
         }
-
+        
         .toast-info {
             background: rgba(59, 130, 246, 0.9);
         }
-
+        
         .progress-bar {
             height: 4px;
             animation: progress 3s linear forwards;
         }
-
+        
         .content-fade-in {
             animation: fadeIn 0.5s ease-in-out;
         }
-
+        
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
+        
+        /* Tool tabs styling */
+        .tool-tabs {
+            display: flex;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 1rem;
+        }
+        
+        .tool-tab {
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+        
+        .tool-tab:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .tool-tab.active {
+            border-bottom-color: #3b82f6;
+            background: rgba(59, 130, 246, 0.1);
+        }
+        
+        .tool-content {
+            display: none;
+        }
+        
+        .tool-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        
+        /* Extraction options styling */
+        .extraction-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .extraction-option {
+            display: flex;
+            align-items: center;
+            padding: 0.5rem 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .extraction-option:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .extraction-option.active {
+            background: rgba(59, 130, 246, 0.3);
+            border-color: rgba(59, 130, 246, 0.5);
+        }
+        
+        .extraction-option i {
+            margin-right: 0.5rem;
+        }
+        
+        /* Input styles */
+        .small-label {
+            font-size: 0.85rem;
+            margin-bottom: 0.25rem;
+            display: block;
+        }
+        
+        .compact-input {
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+        }
+        
+        .input-clear-btn {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        
+        .input-clear-btn:hover {
+            color: white;
+        }
+           .result-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.25rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .result-item:last-child {
+            border-bottom: none;
+        }
+        
+        .copy-item-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: rgba(255, 255, 255, 0.6);
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            cursor: pointer;
+            font-size: 0.7rem;
+            transition: all 0.2s;
+        }
+        
+        .copy-item-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+        
+        .copy-item-btn.copied {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+        }
+        /* Updated styles for textarea container and clear button */
+        .textarea-container {
+            position: relative;
+            margin-bottom: 1rem;
+        }
+        
+        .clear-input-btn {
+            position: absolute;
+            right: 0;
+            bottom: -28px; /* Position below the textarea */
+            background: none;
+            border: none;
+            color: rgba(239, 68, 68, 0.7);
+            cursor: pointer;
+            font-size: 0.9rem;
+            padding: 0.25rem 0.5rem;
+            transition: all 0.2s;
+        }
+        
+        .clear-input-btn:hover {
+            color: rgba(239, 68, 68, 1);
+        }
+        
+        .clear-input-btn i {
+            margin-right: 0.25rem;
+        }
+        .coming-soon-badge {
+            display: inline-block;
+            margin-left: 8px;
+            padding: 2px 6px;
+            font-size: 10px;
+            font-weight: bold;
+            text-transform: uppercase;
+            color: #fff;
+            background-color: #ff6b6b; /* Coral red for attention */
+            border-radius: 10px;
+            vertical-align: middle;
+        }
+        @keyframes pulse {
+    0% { opacity: 0.8; }
+    50% { opacity: 1; }
+    100% { opacity: 0.8; }
+}
+.coming-soon-badge {
+    animation: pulse 2s infinite;
 
+        
         /* Responsive adjustments */
         @media (max-width: 640px) {
             .input-group {
@@ -161,19 +333,34 @@ main {
                 border-bottom-right-radius: 0.75rem !important;
                 border-bottom-left-radius: 0.75rem !important;
             }
+            .tool-tabs {
+                flex-direction: column;
+                border-bottom: none;
+            }
+            .tool-tab {
+                border-bottom: none;
+                border-left: 3px solid transparent;
+            }
+            .tool-tab.active {
+                border-left-color: #3b82f6;
+                border-bottom-color: transparent;
+            }
+            .extraction-options {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
 <body class="animate-stars min-h-screen flex flex-col text-white">
     <!-- Stars Background -->
     <div id="stars-container" class="fixed inset-0 z-0"></div>
-
+    
     <!-- Toast Container -->
     <div id="toast-container" class="fixed top-4 right-4 z-50 space-y-2 w-full max-w-xs"></div>
-
+    
     <!-- Loading Overlay -->
     <div id="loading-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
-        <div class="glass-effect p-8 rounded-2xl shadow-2xl max-w-md w-full mx-4">
+        <div class="glass-effect p-6 rounded-2xl shadow-2xl max-w-md w-full mx-4">
             <div class="flex flex-col items-center space-y-4">
                 <div class="relative">
                     <div class="w-16 h-16 bg-blue-600 rounded-xl flex items-center justify-center text-white font-bold pulse-ring">
@@ -188,7 +375,7 @@ main {
             </div>
         </div>
     </div>
-
+    
     <!-- Header -->
     <header class="glass-effect border-b border-white/20 backdrop-blur-lg z-10">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 py-4">
@@ -201,9 +388,9 @@ main {
                     </div>
                     <div>
                         <h1 class="text-xl sm:text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-400">
-                            TextExtract AI
+                            WMN5 Tools
                         </h1>
-                        <p class="text-xs sm:text-sm text-gray-300">Next-Gen Content Extraction</p>
+                        <p class="text-xs sm:text-sm text-gray-300">Next-Gen Tools</p>
                     </div>
                 </div>
                 <div class="flex items-center space-x-4">
@@ -214,7 +401,7 @@ main {
             </div>
         </div>
     </header>
-
+    
     <!-- Main Content -->
     <main class="flex-grow flex items-center justify-center p-4 sm:p-6 relative z-10">
         <div class="w-full max-w-4xl">
@@ -222,84 +409,162 @@ main {
                 <div class="p-6 sm:p-8 border-b border-white/20">
                     <div class="floating">
                         <h2 class="text-2xl sm:text-3xl font-bold mb-2 bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-blue-400">
-                            Extract Web Content
+                           Extraction Tools
                         </h2>
                         <p class="text-sm sm:text-base text-gray-300">
-                            Powered by advanced AI technology to extract clean, readable content
+                            Powerful tools for extracting content and data from various sources
                         </p>
                     </div>
                 </div>
-
-                <div class="p-6 sm:p-8 space-y-6 sm:space-y-8">
-                    <!-- URL Input -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-300 mb-2">Target URL</label>
-                        <div class="relative">
-                            <div class="flex flex-col sm:flex-row input-group">
-                                <input
-                                    id="website-url"
-                                    type="text"
-                                    placeholder="Enter website URL (e.g., https://example.com)"
-                                    class="flex-grow px-4 sm:px-6 py-3 sm:py-4 rounded-t-xl sm:rounded-l-xl sm:rounded-tr-none bg-white/10 border border-white/30 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300 text-white placeholder-gray-400"
-                                />
-                                <button
-                                    id="random-btn"
-                                    class="neo-brutalism bg-blue-600 hover:bg-blue-700 text-white px-4 sm:px-6 py-3 sm:py-4 rounded-b-xl sm:rounded-r-xl sm:rounded-bl-none flex items-center justify-center space-x-2 transition-colors"
-                                >
-                                    <i class="fas fa-random"></i>
-                                    <span class="hidden sm:inline">Random URL</span>
-                                </button>
+                
+                <div class="p-6 sm:p-8">
+                  <!-- Tool Tabs -->
+                <div class="tool-tabs">
+                    <div class="tool-tab active" data-tab="web-extractor">
+                        <i class="fas fa-globe mr-2"></i> Web Extractor
+                    </div>
+                    <div class="tool-tab" data-tab="data-extractor">
+                        <i class="fas fa-database mr-2"></i> Data Extractor
+                    </div>
+                    <div class="tool-tab" data-tab="domain-reputation">
+                        <i class="fas fa-shield-alt mr-2"></i> Domain Reputation
+                        <span class="coming-soon-badge">Coming Soon</span>
+                    </div>
+                </div>
+                    
+                    <!-- Web Content Extractor -->
+                    <div id="web-extractor" class="tool-content active space-y-4">
+                        <!-- URL Input -->
+                        <div>
+                            <label class="small-label text-gray-300">Target URL</label>
+                            <div class="relative mt-1">
+                                <div class="flex flex-col sm:flex-row input-group">
+                                    <input
+                                        id="website-url"
+                                        type="text"
+                                        placeholder="Enter website URL (e.g., https://example.com)"
+                                        class="flex-grow compact-input px-4 sm:px-6 py-2 sm:py-3 rounded-t-xl sm:rounded-l-xl sm:rounded-tr-none bg-white/10 border border-white/30 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300 text-white placeholder-gray-400"
+                                    />
+                                    <button
+                                        id="random-btn"
+                                        class="neo-brutalism bg-blue-600 hover:bg-blue-700 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-b-xl sm:rounded-r-xl sm:rounded-bl-none flex items-center justify-center space-x-2 transition-colors"
+                                    >
+                                        <i class="fas fa-random"></i>
+                                        <span class="hidden sm:inline">Random</span>
+                                    </button>
+                                </div>
+                                <p id="error-message" class="absolute mt-1 text-xs text-red-400 hidden"></p>
                             </div>
-                            <p id="error-message" class="absolute mt-2 text-sm text-red-400 hidden"></p>
+                        </div>
+                        
+                        <!-- Extract Button -->
+                        <button
+                            id="extract-btn"
+                            class="neo-brutalism w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white py-2 sm:py-3 px-6 rounded-xl text-base font-medium flex items-center justify-center space-x-2 transition-all"
+                        >
+                            <i class="fas fa-bolt"></i>
+                            <span>Extract Content</span>
+                        </button>
+                        
+                        <!-- Results -->
+                        <div id="results-container" class="hidden content-fade-in">
+                            <div class="rounded-xl border border-white/30 overflow-hidden bg-white/10">
+                                <div class="flex justify-between items-center px-4 py-2 bg-black/10 border-b border-white/30">
+                                    <h3 class="font-medium text-sm flex items-center space-x-2">
+                                        <i class="fas fa-file-alt"></i>
+                                        <span>Extracted Content</span>
+                                    </h3>
+                                    <div class="flex space-x-2">
+                                        <button
+                                            id="download-btn"
+                                            class="neo-brutalism px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white text-xs rounded-lg flex items-center space-x-1 transition-colors"
+                                        >
+                                            <i class="fas fa-download"></i>
+                                            <span class="hidden sm:inline">Download</span>
+                                        </button>
+                                        <button
+                                            id="copy-btn"
+                                            class="neo-brutalism px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white text-xs rounded-lg flex items-center space-x-1 transition-colors"
+                                        >
+                                            <i class="fas fa-copy"></i>
+                                            <span class="hidden sm:inline">Copy</span>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="p-4 max-h-[300px] overflow-y-auto">
+                                    <pre id="content-display" class="whitespace-pre-wrap font-mono text-xs leading-relaxed text-gray-200"></pre>
+                                </div>
+                                <div class="px-4 py-2 bg-black/10 border-t border-white/30 text-xs text-gray-400 flex justify-between items-center">
+                                    <div id="content-stats" class="flex items-center space-x-4">
+                                        <span><i class="fas fa-clock"></i> Processed in 1.4s</span>
+                                        <span><i class="fas fa-file-word"></i> 342 words</span>
+                                        <span><i class="fas fa-paragraph"></i> 5 paragraphs</span>
+                                    </div>
+                                    <button id="clear-btn" class="text-red-400 hover:text-red-300 text-sm">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
-
-                    <!-- Extract Button -->
-                    <button
-                        id="extract-btn"
-                        class="neo-brutalism w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white py-3 sm:py-4 px-6 rounded-xl text-lg font-medium flex items-center justify-center space-x-2 transition-all"
-                    >
-                        <i class="fas fa-bolt"></i>
-                        <span>Extract Content</span>
-                    </button>
-
-                    <!-- Results -->
-                    <div id="results-container" class="hidden content-fade-in">
-                        <div class="rounded-xl border border-white/30 overflow-hidden bg-white/10">
-                            <div class="flex justify-between items-center px-4 sm:px-6 py-3 bg-black/10 border-b border-white/30">
-                                <h3 class="font-medium flex items-center space-x-2">
-                                    <i class="fas fa-file-alt"></i>
-                                    <span>Extracted Content</span>
-                                </h3>
-                                <div class="flex space-x-2">
-                                    <button
-                                        id="download-btn"
-                                        class="neo-brutalism px-3 sm:px-4 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg flex items-center space-x-1 transition-colors"
-                                    >
-                                        <i class="fas fa-download"></i>
-                                        <span class="hidden sm:inline">Download</span>
-                                    </button>
-                                    <button
-                                        id="copy-btn"
-                                        class="neo-brutalism px-3 sm:px-4 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg flex items-center space-x-1 transition-colors"
-                                    >
-                                        <i class="fas fa-copy"></i>
-                                        <span class="hidden sm:inline">Copy</span>
-                                    </button>
+                    
+                    <!-- Data Extractor -->
+                    <div id="data-extractor" class="tool-content space-y-4">
+                        <!-- Extraction Options -->
+                        <div>
+                            <label class="small-label text-gray-300">What would you like to extract?</label>
+                            <div class="extraction-options">
+                                <div class="extraction-option active" data-type="servers">
+                                    <i class="fas fa-server text-blue-400"></i>
+                                    <span>Servers</span>
+                                </div>
+                                <div class="extraction-option" data-type="ips">
+                                    <i class="fas fa-network-wired text-green-400"></i>
+                                    <span>IP Addresses</span>
+                                </div>
+                                <div class="extraction-option" data-type="emails">
+                                    <i class="fas fa-envelope text-yellow-400"></i>
+                                    <span>Emails</span>
+                                </div>
+                                <div class="extraction-option" data-type="domains">
+                                    <i class="fas fa-globe text-purple-400"></i>
+                                    <span>Domains</span>
                                 </div>
                             </div>
-                            <div class="p-4 sm:p-6 max-h-[500px] overflow-y-auto">
-                                <pre id="content-display" class="whitespace-pre-wrap font-mono text-sm leading-relaxed text-gray-200"></pre>
-                            </div>
-                            <div class="px-4 sm:px-6 py-3 bg-black/10 border-t border-white/30 text-xs text-gray-400 flex justify-between items-center">
-                                <div id="content-stats" class="flex items-center space-x-4">
-                                    <span><i class="fas fa-clock"></i> Processed in 1.4s</span>
-                                    <span><i class="fas fa-file-word"></i> 342 words</span>
-                                    <span><i class="fas fa-paragraph"></i> 5 paragraphs</span>
-                                </div>
-                                <button id="clear-btn" class="text-red-400 hover:text-red-300">
-                                    <i class="fas fa-trash"></i>
+                        </div>
+                        
+                             <!-- Updated Input Text section with new clear button position -->
+                            <div class="textarea-container">
+                                <label class="small-label text-gray-300">Input text</label>
+                                <textarea id="input-text" class="w-full compact-input mt-1 px-4 py-2 rounded-xl bg-white/10 border border-white/30 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300 text-white placeholder-gray-400" rows="6" placeholder="Paste your text here..."></textarea>
+                                <button id="clear-input-btn" class="clear-input-btn hidden">
+                                    <i class="fas fa-trash"></i> Clear
                                 </button>
+            
+                        
+                        <!-- Results -->
+                        <div id="data-results-container" class="hidden content-fade-in">
+                            <div class="rounded-xl border border-white/30 overflow-hidden bg-white/10">
+                                <div class="flex justify-between items-center px-4 py-2 bg-black/10 border-b border-white/30">
+                                    <div class="flex items-center space-x-2">
+                                        <span id="data-results-count" class="text-sm">3 servers found</span>
+                                    </div>
+                                    <div class="flex space-x-2">
+                                        <button id="save-data-btn" class="neo-brutalism px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white text-xs rounded-lg flex items-center space-x-1 transition-colors">
+                                            <i class="fas fa-save"></i>
+                                            <span>Save</span>
+                                        </button>
+                                        <button id="copy-all-btn" class="neo-brutalism px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white text-xs rounded-lg flex items-center space-x-1 transition-colors">
+                                            <i class="fas fa-copy"></i>
+                                            <span>Copy All</span>
+                                        </button>
+                                    </div>
+                                </div>
+                                   <div class="p-4 max-h-[300px] overflow-y-auto">
+                                    <div id="data-results-display" class="font-mono text-xs leading-relaxed text-gray-200">
+                                        <!-- Results will be inserted here dynamically -->
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -307,25 +572,22 @@ main {
             </div>
         </div>
     </main>
-
+    
     <!-- Footer -->
     <footer class="glass-effect border-t border-white/20 z-10">
         <div class="max-w-6xl mx-auto px-6 py-4 text-center">
             <div class="flex flex-col sm:flex-row justify-center items-center space-y-2 sm:space-y-0 sm:space-x-4">
                 <p class="text-sm text-gray-300">
-                    © <span id="current-year"></span> TextExtract AI
+                    © <span id="current-year"></span> WMN5 Tools
                 </p>
                 <div class="hidden sm:block text-gray-500">•</div>
-              <div class="flex space-x-4 text-sm text-gray-300">
-              <a href="https://github.com/houssamnfissii" class="hover:text-white" target="_blank" rel="noopener noreferrer">Made By    <span class="hover:text-white hover:underline underline-offset-4 cursor-default"><i class="fas fa-code"></i> Houssam nfissi</span></a>
- 
-</div>
-
-
+                <div class="flex space-x-4 text-sm text-gray-300">
+                    <a href="https://github.com/houssamnfissii" class="hover:text-white" target="_blank" rel="noopener noreferrer">Made By <span class="hover:text-white hover:underline underline-offset-4 cursor-default"><i class="fas fa-code"></i> Houssam nfissi</span></a>
+                </div>
             </div>
         </div>
     </footer>
-
+    
     <script>
         // Create stars
         function createStars() {
@@ -352,529 +614,7 @@ main {
                 container.appendChild(star);
             }
         }
-
-        // Sample websites
-        const sampleWebsites = [
-            "trendmicro.com",
-    "samsung.com",
-    "cisco.com",
-    "honeywell.com",
-    "panasonic.com",
-    "asics.com",
-    "westernunion.com",
-    "jpmorgan.com",
-    "ibm.com",
-    "salesforce.com",
-    "aetna.com",
-    "siemens.com",
-    "vmware.com",
-    "dell.com",
-    "stryker.com",
-    "pearson.com",
-    "accenture.com",
-    "mckinsey.com",
-    "bankofamerica.com",
-    "lenovo.com",
-    "juniper.net",
-    "deloitte.com",
-    "kpmg.com",
-    "walmart.com",
-    "thomsonreuters.com",
-    "fujitsu.com",
-    "philips.com",
-    "rockwellautomation.com",
-    "verizon.com",
-    "qantas.com",
-    "deluxe.com",
-    "ups.com",
-    "akamai.com",
-    "ironmountain.com",
-    "marriott.com",
-    "nvidia.com",
-    "telstra.com.au",
-    "spglobal.com",
-    "spark.co.nz",
-    "equinix.com",
-    "ubs.com",
-    "grundfos.com",
-    "medtronic.com",
-    "bt.com",
-    "deere.com",
-    "eni.com",
-    "kia.com",
-    "insight.com",
-    "citrix.com",
-    "autodesk.com",
-    "sap.com",
-    "nba.com",
-    "graco.com",
-    "mastercard.com",
-    "abbvie.com",
-    "gehealthcare.com",
-    "dhl.com",
-    "ihg.com",
-    "keysight.com",
-    "cognizant.com",
-    "informatica.com",
-    "optus.com.au",
-    "medallia.com",
-    "ferrari.com",
-    "lego.com",
-    "marsh.com",
-    "lg.com",
-    "hyundai.com",
-    "emerson.com",
-    "hrblock.com",
-    "arrow.com",
-    "agilent.com",
-    "bostonscientific.com",
-    "harley-davidson.com",
-    "adp.com",
-    "fujifilm.com",
-    "yokogawa.com",
-    "prudential.com",
-    "zebra.com",
-    "fortinet.com",
-    "trimble.com",
-    "jcpenney.com",
-    "salesloft.com",
-    "carters.com",
-    "jeppesen.com",
-    "fiserv.com",
-    "woolworths.com.au",
-    "underarmour.com",
-    "g4s.com",
-    "comcast.com",
-    "tommy.com",
-    "bullhorn.com",
-    "staples.com",
-    "basf.com",
-    "hpe.com",
-    "vonage.com",
-    "nokia.com",
-    "roche.com",
-    "motorolasolutions.com",
-    "snowflake.com",
-    "canadiantire.ca",
-    "grainger.com",
-    "americanexpress.com",
-    "t-mobile.com",
-    "fedex.com",
-    "dyson.com",
-    "teradata.com",
-    "mheducation.com",
-    "webex.com",
-    "nutanix.com",
-    "kohler.com",
-    "chubb.com",
-    "ford.com",
-    "ringcentral.com",
-    "american.edu",
-    "bmw.com",
-    "kaiserpermanente.org",
-    "coles.com.au",
-    "wsj.com",
-    "aarp.org",
-    "synopsys.com",
-    "fresenius-kabi.com",
-    "wiley.com",
-    "atlassian.com",
-    "citi.com",
-    "infor.com",
-    "netapp.com",
-    "patagonia.com",
-    "anaplan.com",
-    "abercrombie.com",
-    "ikea.com",
-    "tibco.com",
-    "linode.com",
-    "usbank.com",
-    "logitech.com",
-    "adt.com",
-    "nttdata.com",
-    "illumina.com",
-    "kohls.com",
-    "enterprise.com",
-    "telstra.com",
-    "chase.com",
-    "splunk.com",
-    "realtor.com",
-    "sony.com",
-    "coach.com",
-    "dnb.com",
-    "dxc.com",
-    "kornferry.com",
-    "churchofjesuschrist.org",
-    "singtel.com",
-    "bmo.com",
-    "8x8.com",
-    "campaignmonitor.com",
-    "takeda.com",
-    "hilton.com",
-    "troweprice.com",
-    "f5.com",
-    "danfoss.com",
-    "ansell.com",
-    "smu.edu",
-    "gsk.com",
-    "ryder.com",
-    "gigamon.com",
-    "bd.com",
-    "shimano.com",
-    "southwest.com",
-    "scania.com",
-    "travelers.com",
-    "connectwise.com",
-    "amadeus.com",
-    "leica-geosystems.com",
-    "bcg.com",
-    "astrazeneca.com",
-    "refinitiv.com",
-    "sky.com",
-    "tyro.com",
-    "anz.com",
-    "uber.com",
-    "lhh.com",
-    "homedepot.com",
-    "sydney.edu.au",
-    "questdiagnostics.com",
-    "aon.com",
-    "qiagen.com",
-    "opentext.com",
-    "ou.edu",
-    "wolterskluwer.com",
-    "solarwinds.com",
-    "appdynamics.com",
-    "boeing.com",
-    "mayoclinic.org",
-    "celonis.com",
-    "pwc.com",
-    "dentsplysirona.com",
-    "avast.com",
-    "northerntrust.com",
-    "taylor.com",
-    "amplifon.com",
-    "cummins.com",
-    "productboard.com",
-    "progressive.com",
-    "canon.com.au",
-    "humana.com",
-    "citizensbank.com",
-    "avalara.com",
-    "dsm.com",
-    "pentair.com",
-    "averydennison.com",
-    "boq.com.au",
-    "netsuite.com",
-    "servicenow.com",
-    "wyndhamhotels.com",
-    "wipro.com",
-    "cat.com",
-    "uscellular.com",
-    "sealedair.com",
-    "bestwestern.com",
-    "doterra.com",
-    "amp.com.au",
-    "aia.com.au",
-    "atlascopco.com",
-    "motorola.com",
-    "steelcase.com",
-    "statestreet.com",
-    "vestas.com",
-    "kerry.com",
-    "veeam.com",
-    "cvent.com",
-    "gehealthcare.com.au",
-    "mattel.com",
-    "automationanywhere.com",
-    "lexisnexis.com",
-    "vertiv.com",
-    "sangoma.com",
-    "delta.com",
-    "sherwin-williams.com",
-    "techdata.com",
-    "unisys.com",
-    "esri.com",
-    "eset.com",
-    "kaspersky.com",
-    "sgs.com",
-    "walgreens.com",
-    "elsevier.com",
-    "rioseo.com",
-    "nike.com",
-    "tzpmdyf.com",
-    "morningstar.com",
-    "in.gov",
-    "brp.com",
-    "dematic.com",
-    "credit-suisse.com",
-    "druva.com",
-    "rmit.edu.au",
-    "racv.com.au",
-    "changehealthcare.com",
-    "rei.com",
-    "thoughtworks.com",
-    "cfainstitute.org",
-    "newyorklife.com",
-    "viasat.com",
-    "brenntag.com",
-    "deakin.edu.au",
-    "optimizely.com",
-    "xero.com",
-    "bassproboatingcenters.com",
-    "ieee.org",
-    "puma.com",
-    "eaton.com",
-    "barcelo.com",
-    "internationalsos.com",
-    "whirlpool.com",
-    "bell.ca",
-    "westconcomstor.com",
-    "morganstanley.com",
-    "straumann.com",
-    "pnc.com",
-    "auburn.edu",
-    "sharecare.com",
-    "grantthornton.com.au",
-    "csu.edu.au",
-    "marksandspencer.com",
-    "jbhifi.com.au",
-    "omron.com",
-    "shutterstock.com",
-    "k12.com",
-    "swarovski.com",
-    "doda.jp",
-    "scotiabank.com",
-    "lululemon.com",
-    "xerox.com",
-    "cvs.com",
-    "mobify-storefront.com",
-    "aetnamedicare.com",
-    "massmutual.com",
-    "infosys.com",
-    "kpn.com",
-    "ni.com",
-    "ally.com",
-    "betterworks.com",
-    "lennar.com",
-    "parker.com",
-    "choicehotels.com",
-    "asana.com",
-    "blackrock.com",
-    "dormakaba.com",
-    "europcar.com",
-    "centurylink.com",
-    "mediaroom.com",
-    "kcprofessional.com",
-    "aveva.com",
-    "dupont.com",
-    "blackthorn.io",
-    "assaabloy.com",
-    "arm.com",
-    "mattermost.com",
-    "bakerhughes.com",
-    "vans.com",
-    "resmed.com",
-    "web.com",
-    "murata.com",
-    "wn.com",
-    "chrobinson.com",
-    "buhlergroup.com",
-    "vueling.com",
-    "verkada.com",
-    "siteone.com",
-    "texas.gov",
-    "nab.com.au",
-    "sonos.com",
-    "micron.com",
-    "thermofisher.com",
-    "fidelity.com",
-    "mckesson.com",
-    "elastic.co",
-    "mercer.com",
-    "molex.com",
-    "hsbc.com.hk",
-    "uhc.com",
-    "thalesgroup.com",
-    "landsend.com",
-    "vizio.com",
-    "storaenso.com",
-    "merkle.com",
-    "qlik.com",
-    "ge.com",
-    "illinois.gov",
-    "ticketmaster.com",
-    "thoughtspot.com",
-    "libertymutual.com",
-    "pitneybowes.com",
-    "chanel.com",
-    "analog.com",
-    "macquarie.com",
-    "spectrum.com",
-    "buffalo.edu",
-    "ameriprise.com",
-    "ee.co.uk",
-    "insightsoftware.com",
-    "johnsoncontrols.com",
-    "nasdaq.com",
-    "paypal.com",
-    "jll.com",
-    "unbounce.com",
-    "miamioh.edu",
-    "bitdefender.com",
-    "wnba.com",
-    "veritone.com",
-    "cedars-sinai.org",
-    "registria.com",
-    "bazaarvoice.com",
-    "phonak.com",
-    "bayer.com",
-    "samsclub.com",
-    "aryaka.com",
-    "malaysiaairlines.com",
-    "relativity.com",
-    "zeiss.com",
-    "okta.com",
-    "parallels.com",
-    "avanade.com",
-    "basspro.com",
-    "enterprisecarshare.com",
-    "bcbstx.com",
-    "onepeloton.com",
-    "fnz.com",
-    "bms.com",
-    "redbull.com",
-    "booking.com",
-    "hillspet.com",
-    "huawei.com",
-    "experian.com",
-    "munichre.com",
-    "kaseya.com",
-    "proximus.be",
-    "staplesadvantage.com",
-    "scotts.com",
-    "mcafee.com",
-    "codesports.com.au",
-    "mercurymarine.com",
-    "directv.com",
-    "ft.com",
-    "cengage.com",
-    "mulesoft.com",
-    "removed",
-    "st.com",
-    "cathaypacific.com",
-    "octanner.com",
-    "grifols.com",
-    "docusign.com",
-    "forbes.com",
-    "procore.com",
-    "constellation.com",
-    "fastcompany.com",
-    "leidos.com",
-    "verygoodsecurity.com",
-    "svb.com",
-    "cardinalhealth.com",
-    "purestorage.com",
-    "novartis.com",
-    "cochlear.com",
-    "hsbc.com",
-    "cpanel.net",
-    "afterpay.com",
-    "sweatybetty.com",
-    "recruit.co.jp",
-    "securitymetrics.com",
-    "fisglobal.com",
-    "sierrawireless.com",
-    "intel.com",
-    "snowsoftware.com",
-    "tivo.com",
-    "volusion.com",
-    "capella.edu",
-    "thebodyshop.com",
-    "act.org",
-    "stantec.com",
-    "allinahealthaetnamedicare.com",
-    "orange-business.com",
-    "royalcanin.com",
-    "genesis.com",
-    "bouyguestelecom.fr",
-    "news.com.au",
-    "q2.com",
-    "irobot.com",
-    "alaskaair.com",
-    "liveclicker.com",
-    "gartner.com",
-    "originenergy.com.au",
-    "gehealthcare.co.jp",
-    "softwareone.com",
-    "lpl.com",
-    "barco.com",
-    "weber.com",
-    "toyota.com",
-    "bayliner.com",
-    "bcbsil.com",
-    "gehealthcare.ca",
-    "proquest.com",
-    "supermicro.com",
-    "bcbsmt.com",
-    "nbcuni.com",
-    "hydro.com",
-    "accor.com",
-    "aroma360.com",
-    "commscope.com",
-    "macquarietelecom.com",
-    "aig.com",
-    "xsolla.com",
-    "jostens.com",
-    "experian.co.uk",
-    "schindler.com",
-    "breville.com",
-    "weedmaps.com",
-    "pwc.com.au",
-    "barracuda.com",
-    "nationalcar.com",
-    "realpage.com",
-    "bill.com",
-    "andritz.com",
-    "sciencelogic.com",
-    "foxtel.com.au",
-    "telus.com",
-    "mufg.jp",
-    "aa.com",
-    "surepayroll.com",
-    "kddi.com",
-    "digicert.com",
-    "telenet.be",
-    "gmocloud.com",
-    "slb.com",
-    "dialpad.com",
-    "covestro.com",
-    "rocketsoftware.com",
-    "crownpeak.com",
-    "se.com",
-    "kipling-usa.com",
-    "microchip.com",
-        ];
-
-        // DOM Elements
-        const urlInput = document.getElementById('website-url');
-        const randomBtn = document.getElementById('random-btn');
-        const extractBtn = document.getElementById('extract-btn');
-        const copyBtn = document.getElementById('copy-btn');
-        const downloadBtn = document.getElementById('download-btn');
-        const clearBtn = document.getElementById('clear-btn');
-        const errorMessage = document.getElementById('error-message');
-        const resultsContainer = document.getElementById('results-container');
-        const contentDisplay = document.getElementById('content-display');
-        const currentYear = document.getElementById('current-year');
-        const toastContainer = document.getElementById('toast-container');
-        const loadingOverlay = document.getElementById('loading-overlay');
-        const progressBar = document.getElementById('progress-bar');
-
-        // Initialize
-        createStars();
-        currentYear.textContent = new Date().getFullYear();
-
+        
         // Show toast notification
         function showToast(message, type = 'info', duration = 3000) {
             const toast = document.createElement('div');
@@ -905,14 +645,1055 @@ main {
                 </div>
             `;
             
-            toastContainer.appendChild(toast);
+            document.getElementById('toast-container').appendChild(toast);
             
             // Remove toast after animation
             setTimeout(() => {
                 toast.remove();
             }, duration);
         }
-
+        
+        // Initialize
+        createStars();
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+        
+        // Tab switching functionality
+        const tabs = document.querySelectorAll('.tool-tab');
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                // Remove active class from all tabs and contents
+                document.querySelectorAll('.tool-tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tool-content').forEach(c => c.classList.remove('active'));
+                
+                // Add active class to clicked tab and corresponding content
+                tab.classList.add('active');
+                const tabId = tab.getAttribute('data-tab');
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
+        
+        // ========== Web Content Extractor ==========
+        // Sample websites
+        const sampleWebsites = [
+            "medical.canon",
+    "nationalgeographic.com",
+    "potterybarnkids.ca",
+    "nyc.gov",
+    "avaya.com",
+    "kaltura.com",
+    "cape.com",
+    "cegid.com",
+    "bgsu.edu",
+    "adventhealth.com",
+    "bosch.com",
+    "schoolspecialty.com",
+    "cloudera.com",
+    "adecco.com",
+    "ansarada.com",
+    "hitachivantara.com",
+    "cabelas.com",
+    "cribl.io",
+    "marks.com",
+    "contentstack.com",
+    "nissan.co.uk",
+    "pictet.com",
+    "cloudbees.com",
+    "dickssportinggoods.com",
+    "etsy.com",
+    "lgim.com",
+    "sky.it",
+    "idxbroker.com",
+    "53.com",
+    "academy.com",
+    "strayer.edu",
+    "chrysler.com",
+    "worldline.com",
+    "grubhub.com",
+    "hss.edu",
+    "logmein.com",
+    "sendoso.com",
+    "intertek.com",
+    "sage.com",
+    "cibc.com",
+    "removed",
+    "liftmaster.com",
+    "genesiscare.com",
+    "bcbsok.com",
+    "printerlogic.com",
+    "danaher.com",
+    "capitalone.com",
+    "atco.com",
+    "td.com",
+    "extremenetworks.com",
+    "moen.com",
+    "seagate.com",
+    "idp.com",
+    "sakura.ad.jp",
+    "bernstein.com",
+    "acer.com",
+    "dynata.com",
+    "lwolf.com",
+    "rs-online.com",
+    "rsmus.com",
+    "ecolab.com",
+    "manulife.com",
+    "manh.com",
+    "visa.com",
+    "albertsons.com",
+    "mandiant.com",
+    "efi.com",
+    "bmw.fr",
+    "ssab.com",
+    "ashleyfurniture.com",
+    "hillspet.com.au",
+    "etoro.com",
+    "thermoking.com",
+    "tcs.com",
+    "paloaltonetworks.com",
+    "salsify.com",
+    "pge.com",
+    "lumen.com",
+    "dyson.com.au",
+    "assurant.com",
+    "qualcomm.com",
+    "agcocorp.com",
+    "zscaler.com",
+    "qatarairways.com",
+    "ancestry.com",
+    "trupanion.com",
+    "globalblue.com",
+    "searay.com",
+    "alation.com",
+    "ecovadis.com",
+    "tetrapak.com",
+    "kone.com",
+    "reliant.com",
+    "magnite.com",
+    "heart.org",
+    "wintrust.com",
+    "mitel.com",
+    "amdocs.com",
+    "medibank.com.au",
+    "entel.cl",
+    "twilio.com",
+    "optum.com",
+    "williams-sonoma.ca",
+    "signify.com",
+    "wework.com",
+    "lifetime.life",
+    "vts.com",
+    "avant.org.au",
+    "hotwire.com",
+    "shoecarnival.com",
+    "exabeam.com",
+    "everfi.com",
+    "dropbox.com",
+    "hilti.com",
+    "harrisboats.com",
+    "kodak.com",
+    "yeti.com",
+    "dynatrace.com",
+    "microfocus.com",
+    "sportsbusinessjournal.com",
+    "williams-sonoma.com",
+    "deliveroo.com",
+    "silabs.com",
+    "sophos.com",
+    "hawaiianairlines.com",
+    "tennantco.com",
+    "biomerieux.com",
+    "ozyegin.edu.tr",
+    "gehealthcare.com.br",
+    "philips.com.au",
+    "ciena.com",
+    "claris.com",
+    "nvidia.cn",
+    "westpac.com.au",
+    "evolveip.net",
+    "stjude.org",
+    "cytivalifesciences.com",
+    "waldenu.edu",
+    "acquia.com",
+    "dsm-firmenich.com",
+    "verisk.com",
+    "cmcmarkets.com",
+    "dnanexus.com",
+    "bcbsnm.com",
+    "dailytelegraph.com.au",
+    "pexa.com.au",
+    "alcon.com",
+    "lightspeedhq.com",
+    "konghq.com",
+    "myer.com.au",
+    "coca-cola.com",
+    "corning.com",
+    "dbs.com",
+    "dentsu.com",
+    "ivoclar.com",
+    "anthem.com",
+    "ml.com",
+    "checkpoint.com",
+    "ceridian.com",
+    "mimecast.com",
+    "acu.edu",
+    "elanco.com",
+    "fishersci.com",
+    "deluxe.ca",
+    "pantheon.io",
+    "pingidentity.com",
+    "advancedbionics.com",
+    "resideo.com",
+    "gocardless.com",
+    "workiva.com",
+    "wavin.com",
+    "porsche.com",
+    "clarivate.com",
+    "nexthink.com",
+    "formstack.com",
+    "lseg.com",
+    "squiz.net",
+    "exclusive-networks.com",
+    "digikey.com.au",
+    "onetrust.com",
+    "credit-agricole.fr",
+    "armstrongceilings.com",
+    "sofi.com",
+    "miraclegro.com",
+    "uipath.com",
+    "baylor.edu",
+    "epam.com",
+    "friendlybeacon.com",
+    "waters.com",
+    "agl.com.au",
+    "pella.com",
+    "zimmerbiomet.com",
+    "terex.com",
+    "skechers.com",
+    "fandango.com",
+    "vrbo.com",
+    "cognism.com",
+    "xylem.com",
+    "pli.edu",
+    "amplitude.com",
+    "insurity.com",
+    "aerogarden.com",
+    "commbank.com.au",
+    "amfam.com",
+    "williamhill.com",
+    "overstock.com",
+    "moodys.com",
+    "globalknowledge.com",
+    "firstcitizens.com",
+    "coachoutlet.com",
+    "lexmark.com",
+    "lundboats.com",
+    "jackson.com",
+    "integrate.com",
+    "maersk.com",
+    "abb.com",
+    "adroll.com",
+    "protegrity.com",
+    "mclaren.com",
+    "northeastern.edu",
+    "shein.com",
+    "digikey.ch",
+    "digikey.co.za",
+    "latitudefinancial.com.au",
+    "airregi.jp",
+    "ifit.com",
+    "gilead.com",
+    "versapay.com",
+    "leaseplan.com",
+    "rogers.com",
+    "potterybarn.com",
+    "smartsheet.com",
+    "jefferson.edu",
+    "tenable.com",
+    "allianz-trade.com",
+    "toyota.ge",
+    "crowdstrike.com",
+    "gamestop.com",
+    "ingenico.com",
+    "mathworks.com",
+    "toyota.bg",
+    "gehealthcare.co.kr",
+    "mini.jp",
+    "ncr.com",
+    "bizjournals.com",
+    "ecu.edu.au",
+    "trelleborg.com",
+    "sumologic.com",
+    "sgproof.com",
+    "providence.org",
+    "huntington.com",
+    "rightworks.com",
+    "yotpo.com",
+    "neimanmarcus.com",
+    "westernsydney.edu.au",
+    "gm.com",
+    "travelctm.com",
+    "henkel-adhesives.com",
+    "invesco.com",
+    "eso.com",
+    "monotype.com",
+    "weforum.org",
+    "pcl.com",
+    "valmet.com",
+    "sumup.com",
+    "orange.pl",
+    "expedient.com",
+    "kuehne-nagel.com",
+    "ortho.com",
+    "aware.com.au",
+    "viega.com",
+    "softwareag.com",
+    "crucial.com",
+    "nexcess.net",
+    "halliburton.com",
+    "corelogic.com.au",
+    "coconutsoftware.com",
+    "g2.com",
+    "rikunabi.com",
+    "pressdns.com",
+    "unitrends.com",
+    "volvogroup.com",
+    "maropost.com",
+    "subway.com",
+    "digikey.ca",
+    "digikey.ie",
+    "redcross.org",
+    "venturebeat.com",
+    "innovid.com",
+    "jpmorganchase.com",
+    "nextdoor.com",
+    "svsu.edu",
+    "express-scripts.com",
+    "acs.org",
+    "cox.com",
+    "stratasys.com",
+    "five9.com",
+    "casio.com",
+    "indigoag.com",
+    "skedulo.com",
+    "cspire.com",
+    "bostonwhaler.com",
+    "saiglobal.com",
+    "auspost.com.au",
+    "canon.com",
+    "canberra.edu.au",
+    "reflektive.com",
+    "babybunting.com.au",
+    "unum.com",
+    "netdocuments.com",
+    "chronicle.com",
+    "aggreko.com",
+    "dow.com",
+    "disneyplus.com",
+    "bose.com",
+    "digikey.be",
+    "cu.edu",
+    "mcdonalds.com",
+    "interactive.com.au",
+    "wef.org",
+    "popmenu.com",
+    "alaskacommunications.com",
+    "migros.ch",
+    "wtwco.com",
+    "voestalpine.com",
+    "hunterfan.com",
+    "binge.com.au",
+    "canada.ca",
+    "redhat.com",
+    "underarmour.com.my",
+    "underarmour.com.sg",
+    "connection.com",
+    "cartier.com",
+    "windstream.com",
+    "chevron.com",
+    "altium.com",
+    "amd.com",
+    "ncl.com",
+    "denverpost.com",
+    "chevrolet.com",
+    "abcarval.com",
+    "bdo.com",
+    "brightlysoftware.com",
+    "du.edu",
+    "uc.edu",
+    "cdw.com",
+    "logicool.co.jp",
+    "toasttab.com",
+    "yamaha.com",
+    "hugoboss.com",
+    "buildium.com",
+    "artofliving.org",
+    "cargill.com",
+    "netjets.com",
+    "dksh.com",
+    "ascm.org",
+    "zoetisus.com",
+    "colgate.com",
+    "louisvuitton.com",
+    "skf.com",
+    "flinders.edu.au",
+    "brightcove.com",
+    "aerotek.com",
+    "alstom.com",
+    "lightspeedsystems.com",
+    "uberflip.com",
+    "ada.org",
+    "removed",
+    "virginmoney.com.au",
+    "datacom.com",
+    "timberland.com",
+    "jcrew.com",
+    "airasia.com",
+    "berlitz.com",
+    "perforce.com",
+    "bottomline.com",
+    "draftkings.com",
+    "sigmaaldrich.com",
+    "coty.com",
+    "akc.org",
+    "nuance.com",
+    "newrelic.com",
+    "mackenzieinvestments.com",
+    "sanqinxiangmu.com",
+    "nationaltrust.org.uk",
+    "hulu.com",
+    "nielsen.com",
+    "delltechnologies.com",
+    "microncpg.com",
+    "mercuryracing.com",
+    "smith-nephew.com",
+    "bankatfirst.com",
+    "unqork.com",
+    "emblemhealth.com",
+    "mindbodyonline.com",
+    "elisa.fi",
+    "td.org",
+    "avidxchange.com",
+    "wcei.net",
+    "delonghi.com",
+    "commvault.com",
+    "axway.com",
+    "veritas.com",
+    "tomcatbrand.com",
+    "udemy.com",
+    "brighthorizons.com",
+    "crestliner.com",
+    "qualys.com",
+    "cority.com",
+    "faef.com",
+    "cyberark.com",
+    "markem-imaje.com",
+    "cloudflare.com",
+    "coupa.com",
+    "otis.com",
+    "progress.com",
+    "cloudbolt.io",
+    "honda.com.au",
+    "removed",
+    "sirva.com",
+    "avnet.com",
+    "ntt.com",
+    "panopto.com",
+    "potterybarnkids.com",
+    "bmw.de",
+    "avira.com",
+    "myherbalife.com",
+    "bamboohr.com",
+    "copeland.com",
+    "westelm.com",
+    "smallhd.com",
+    "shawcontract.com",
+    "autoshopsolutions.com",
+    "roundup.com",
+    "colliers.com",
+    "bandwidth.com",
+    "toyota.co.il",
+    "cision.com",
+    "pfizer.com",
+    "lululemon.com.au",
+    "wm.com",
+    "aramarkuniform.com",
+    "pacific.edu",
+    "box.com",
+    "oclc.org",
+    "calvinklein.be",
+    "flywire.com",
+    "gehealthcare.in",
+    "actalentservices.com",
+    "transunion.com",
+    "marqeta.com",
+    "ingrammicro.com",
+    "boots.com",
+    "enterprise.fr",
+    "withsecure.com",
+    "rentokil.com",
+    "tranetechnologies.com",
+    "electrolux.com",
+    "sovos.com",
+    "spinutech.com",
+    "bounteous.com",
+    "crocs.com",
+    "algonquincollege.com",
+    "bradken.com",
+    "beyondbank.com.au",
+    "ocbc.com",
+    "bancobmg.com.br",
+    "aptiv.com",
+    "ford.fr",
+    "dior.com",
+    "firstam.com",
+    "gia.edu",
+    "isg-one.com",
+    "tracfone.com",
+    "biglots.com",
+    "enterprise.ie",
+    "garmin.com",
+    "navex.com",
+    "goto.com",
+    "pointclickcare.com",
+    "xfinity.com",
+    "scholastic.com",
+    "medix-inc.co.jp",
+    "virginatlantic.com",
+    "customerlobby.com",
+    "nuveen.com",
+    "c2fo.com",
+    "broadcom.com",
+    "removed",
+    "bmc.com",
+    "jitterbit.com",
+    "aramark.com",
+    "blackstone.com",
+    "icelandair.com",
+    "koreanair.com",
+    "rossu.edu",
+    "polb.com",
+    "bp.com",
+    "venafi.com",
+    "freshproduce.com",
+    "celanese.com",
+    "egencia.com",
+    "ansys.com",
+    "sjsu.edu",
+    "ted.com",
+    "lifefitness.com",
+    "chevronlubricants.com",
+    "magento.com",
+    "thehartford.com",
+    "pbteen.com",
+    "confluent.io",
+    "ovhcloud.com",
+    "ionos.com",
+    "ziplyfiber.com",
+    "chapman.edu",
+    "katespade.com",
+    "hesta.com.au",
+    "gocanvas.com",
+    "maplesoft.com",
+    "canon.co.nz",
+    "idevdesign.net",
+    "schneider-electric.com",
+    "jbhunt.com",
+    "nationwide.com",
+    "donaldson.com",
+    "infoblox.com",
+    "safeco.com",
+    "mt.com",
+    "mgmresorts.com",
+    "axon.com",
+    "savvas.com",
+    "mitsubishielectric.com",
+    "leviton.com",
+    "generac.com",
+    "insightpartners.com",
+    "clover.com",
+    "domain.com.au",
+    "csgi.com",
+    "cubic.com",
+    "3m.com",
+    "vanguard.com",
+    "etexgroup.com",
+    "blackline.com",
+    "purchasingpower.com",
+    "algolia.com",
+    "zara.com",
+    "te.com",
+    "umb.edu",
+    "paychex.com",
+    "gehealthcare.co.uk",
+    "ivanti.com",
+    "wpi.edu",
+    "akzonobel.com",
+    "mars.com",
+    "offerup.com",
+    "qsc.com",
+    "natixis.com",
+    "genpact.com",
+    "heydaywakeboats.com",
+    "toyota.az",
+    "hm.com",
+    "licensingexpo.com",
+    "appliedsystems.com",
+    "globaldata.com",
+    "cupraofficial.co.nz",
+    "mercy.net",
+    "finning.com",
+    "navisite.com",
+    "centene.com",
+    "jetstar.com",
+    "loccitane.com",
+    "dealpath.com",
+    "underarmour.com.au",
+    "zayo.com",
+    "panerabread.com",
+    "honda.com",
+    "pepperdine.edu",
+    "zoetis.com",
+    "nielseniq.com",
+    "allianz.com.au",
+    "shellenergy.com.au",
+    "nordea.com",
+    "deutschepost.de",
+    "digitalriver.com",
+    "lionbridge.com",
+    "perpetual.com.au",
+    "asianpaints.com",
+    "converse.com",
+    "tesla.com",
+    "chevrontexacorewards.com",
+    "rsmcanada.com",
+    "cliffordchance.com",
+    "freee.co.jp",
+    "kay.com",
+    "toyota.hu",
+    "ebis.ne.jp",
+    "canva.com",
+    "zoom.us",
+    "ford.com.au",
+    "nissan.ca",
+    "highlights.com",
+    "brickworks.com.au",
+    "humaninterest.com",
+    "kitchenaid.com",
+    "crucial.in",
+    "anchore.com",
+    "bmwusa.com",
+    "stericycle.com",
+    "suncorp.com.au",
+    "iqos.com",
+    "lloydsbank.com",
+    "heidrick.com",
+    "tec.mx",
+    "grundfos.cn",
+    "ccleaner.com",
+    "nextgen.com",
+    "fanduel.com",
+    "audi.com.au",
+    "dysoncanada.ca",
+    "chicos.com",
+    "bmw.ch",
+    "apptimize.com",
+    "sita.aero",
+    "ford.co.uk",
+    "mdanderson.org",
+    "lastpass.com",
+    "planview.com",
+    "caremark.com",
+    "abfunds.com.tw",
+    "payoneer.com",
+    "evertrue.com",
+    "express.com",
+    "shure.com",
+    "buildabear.com",
+    "economist.com",
+    "telesign.com",
+    "sodexo.com",
+    "postnl.nl",
+    "u-can.co.jp",
+    "trustly.com",
+    "boateka.com",
+    "mailjet.com",
+    "talbots.com",
+    "ssga.com",
+    "dbschenker.com",
+    "americangirl.com",
+    "instructure.com",
+    "d2l.com",
+    "huronconsultinggroup.com",
+    "storagecraft.com",
+    "paycor.com",
+    "matcotools.com",
+    "allstate.com",
+    "blackbaud.com",
+    "onfido.com",
+    "sportchek.ca",
+    "pirelli.com",
+    "subzero-wolf.com",
+    "exclusiveresorts.com",
+    "activecampaign.com",
+    "adyen.com",
+    "kogan.com",
+    "workday.com",
+    "sailthru.com",
+    "forever21.com",
+    "tiffany.com",
+    "adecco.fr",
+    "alberta.ca",
+    "hsbc.co.uk",
+    "vodafone.com.au",
+    "seequent.com",
+    "gucci.com",
+    "fleetcomplete.com",
+    "pwc.ch",
+    "ford.de",
+    "aviva.ca",
+    "absolute.com",
+    "airbnb.com",
+    "insper.edu.br",
+    "asx.com.au",
+    "seek.com.au",
+    "mindtickle.com",
+    "dometic.com",
+    "sysdig.com",
+    "vuoriclothing.com",
+    "gonzaga.edu",
+    "pingdom.com",
+    "mckinsey.com.br",
+    "mfs.com",
+    "pandasecurity.com",
+    "mini.co.uk",
+    "doordash.com",
+    "gusto.com",
+    "mini.fr",
+    "couriermail.com.au",
+    "assemblysoftware.com",
+    "cirquedusoleil.com",
+    "falabella.com",
+    "uwyo.edu",
+    "illy.com",
+    "fastly.com",
+    "league.com",
+    "duo.com",
+    "cbssports.com",
+    "jobvite.com",
+    "essensys.tech",
+    "generalmills.com",
+    "penfed.org",
+    "aiven.io",
+    "toyota.com.tr",
+    "madewell.com",
+    "omron.co.jp",
+    "zip.co",
+    "seat.co.nz",
+    "pharos.com",
+    "publicissapient.com",
+    "kayosports.com.au",
+    "energyaspects.com",
+    "autoserve1.com",
+    "royalcaribbean.com",
+    "aldi.us",
+    "fabianafilippi.com",
+    "theknot.com",
+    "alkami.com",
+    "cleanaway.com.au",
+    "idec.com",
+    "equifax.com",
+    "geodis.com",
+    "fastspring.com",
+    "mini.be",
+    "enterprise.ca",
+    "ifs.com",
+    "veracode.com",
+    "enterprisetrucks.com",
+    "computacenter.com",
+    "tjx.com",
+    "dayforce.com",
+    "skynews.com.au",
+    "bmw.co.jp",
+    "servicemax.com",
+    "bridgestone.com",
+    "abnamro.com",
+    "enverahealth.com",
+    "microdesk.com",
+    "malwarebytes.com",
+    "hallmark.com",
+    "commercev3.com",
+    "sinch.com",
+    "harryanddavid.com",
+    "lsu.edu",
+    "microstrategy.com",
+    "hollister.com",
+    "viewsonic.com",
+    "rapid7.com",
+    "paloaltonetworks.tw",
+    "madecomfy.com.au",
+    "smarsh.com",
+    "circle.com",
+    "on24.com",
+    "bigcommerce.com",
+    "worldbank.org",
+    "fmcna.com",
+    "alteryx.com",
+    "lennox.com",
+    "teachforamerica.org",
+    "fidelityworkplace-test.com",
+    "ionos.de",
+    "strongtie.com",
+    "bettercloud.com",
+    "enterpriserentacar.com.au",
+    "mini.se",
+    "universal-robots.com",
+    "hach.com",
+    "rehau.com",
+    "steadfast.com.au",
+    "powerschool.com",
+    "forevermark.com",
+    "kasasa.com",
+    "volvo.com",
+    "lendlease.com",
+    "sunlife.com",
+    "lequipeur.com",
+    "chryslerjeepdodgeofhermitage.net",
+    "sixflags.com",
+    "mcgill.ca",
+    "sms-magic.com",
+    "suse.com",
+    "herbalife.com",
+    "concentrix.com",
+    "gojo.com",
+    "brooksrunning.com",
+    "theguardian.com",
+    "siteminder.com",
+    "oohmedia.com.au",
+    "ebsco.com",
+    "viewpoint.com",
+    "gs1us.org",
+    "tobii.com",
+    "roadie.com",
+    "idealindustries.com",
+    "westerndigital.com",
+    "wsp.com",
+    "lakeshorelearning.com",
+    "bloomingdales.com",
+    "americancentury.com",
+    "vu.edu.au",
+    "folloze.com",
+    "theaustralian.com.au",
+    "bmw.com.au",
+    "thechronicle.com.au",
+    "firemon.com",
+    "gfk.com",
+    "rci.com",
+    "geico.com",
+    "pluralsight.com",
+    "servicetitan.com",
+    "uwf.edu",
+    "edelmanfinancialengines.com",
+    "newhaven.edu",
+    "element14.com",
+    "enterprisetrucks.ca",
+    "cityofsacramento.org",
+    "escape.com.au",
+    "ibisworld.com",
+    "lvmh.com",
+    "mynrma.com.au",
+    "artemishealth.com",
+    "a10networks.com",
+    "bugaboo.com",
+    "socomec.com",
+    "avetta.com",
+    "omnitracs.com",
+    "shorelight.com",
+    "asda.com",
+    "endava.com",
+    "informaticaworld.com",
+    "daysmart.com",
+    "imd.org",
+    "carsales.com.au",
+    "kingspan.com",
+    "greenhouse.com",
+    "unomaha.edu",
+    "ryanair.com",
+    "fuller.edu",
+    "franklincovey.com",
+    "arkema.com",
+    "ingredion.com",
+    "hbs.edu",
+    "tricentis.com",
+    "ballarddesigns.com",
+    "equinox.com",
+    "jumpcloud.com",
+    "dish.com",
+    "peets.com",
+    "fidelityworkplace.com",
+    "computershare.com",
+    "bluebeam.com",
+    "repco.co.nz",
+    "fluenceenergy.com",
+    "digikey.tw",
+    "audible.com.au",
+    "crown.com",
+    "fordmoney.co.uk",
+    "orange.ro",
+    "ehs.com",
+    "evernorth.com",
+    "ford.it",
+    "appfolio.com",
+    "darntough.com",
+    "arup.com",
+    "enterprise.co.uk",
+    "uniphore.com",
+    "cruciallearning.com",
+    "ofx.com",
+    "weeklytimesnow.com.au",
+    "medica.com",
+    "esrichina.hk",
+    "ventia.com",
+    "nature.org",
+    "go2bank.com",
+    "missingkids.org",
+    "pg.com",
+    "richemont.com",
+    "rackspace.com",
+    "sabre.com",
+    "hyundaiusa.com",
+    "quora.com",
+    "russellinvestments.com",
+    "destaco.com",
+    "cepheid.com",
+    "ford.es",
+    "iqvia.com",
+    "dice.com",
+    "stockland.com.au",
+    "thomsonreuters.co.uk",
+    "kroll.com",
+    "lumivero.com",
+    "travismathew.ca",
+    "saucelabs.com",
+    "tui.co.uk",
+    "hermanmiller.com",
+    "thebay.com",
+    "webmd.com",
+    "alfaromeo.pl",
+    "australianunity.com.au",
+    "tpgtelecom.com.au",
+    "allegion.com",
+    "labcorp.com",
+    "barnesandnoble.com",
+    "toyota.de",
+    "siemens-healthineers.com",
+    "gea.com",
+    "jeep.pl",
+    "littleburgundyshoes.com",
+    "gmfinancial.com",
+    "centralreach.com",
+    "lincoln.com",
+    "northropgrumman.com",
+    "milestoneinternet.com",
+    "hackerrank.com",
+    "gong.io",
+    "stadt-zuerich.ch",
+    "burberry.com",
+    "interface.com",
+    "fetcher.ai",
+    "pilotflyingj.com",
+    "newforma.com",
+    "hotelchocolat.com",
+    "etundra.com",
+    "miniusa.com",
+    "kennesaw.edu",
+    "ooma.com",
+    "sportradar.com",
+    "businessinsider.com",
+    "marlinnet.net",
+    "collegeboard.org",
+    "rsa.com",
+    "rocklandtrust.com",
+    "boden.co.uk",
+    "weatherford.com",
+    "jamf.com",
+    "rzsoftware.com",
+    "bnpparibas.com",
+    "brother.com",
+    "cgi.com",
+    "kubota.com",
+    "wwd.com",
+    "trane.com",
+    "westga.edu",
+    "caterpillar.com",
+    "heraldsun.com.au",
+    "bnpparibas.net",
+    "tkelevator.com",
+    "rbauction.com",
+    "kaspersky.de",
+    "visma.com",
+    "resmed.com.au",
+    "shell.com",
+    "ksb.com",
+    "newyorklifeinvestments.com",
+    "care.com",
+    "ampol.com.au",
+    "honeywellhome.com",
+    "dsv.com",
+    "bcbsla.com",
+    "enphase.com",
+    "morganstanley.com.au",
+    "thousandeyes.com",
+    "southwesthotels.com",
+    "classy.org",
+    "jebbit.com",
+    "macquariecloudservices.com",
+    "clari.com",
+    "nufarm.com",
+    "flsmidth.com",
+    "drmartens.com",
+    "rgare.com",
+    "telcel.com",
+    "launchdarkly.com",
+    "go-vip.co",
+    "crashplan.com",
+    "exxonmobil.com",
+    "ing.com.au",
+    "brennanit.com.au",
+    "verisign.com",
+    "fossa.com",
+    "odu.edu",
+    "loandepot.com",
+    "expedia.com",
+    "case.edu",
+    "akm.com",
+    "panduit.com",
+    "toyota.it",
+    "arista.com",
+    "toyota.se",
+    "postman.com",
+    "temple.edu",
+    "kelsey-seybold.com",
+    "pendalgroup.com",
+    "datastax.com",
+    "crayola.com",
+    "dowjones.com",
+    "hillrom.com",
+    "dolcegabbana.com",
+        ];
+        
+        // DOM Elements for Web Extractor
+        const urlInput = document.getElementById('website-url');
+        const randomBtn = document.getElementById('random-btn');
+        const extractBtn = document.getElementById('extract-btn');
+        const copyBtn = document.getElementById('copy-btn');
+        const downloadBtn = document.getElementById('download-btn');
+        const clearBtn = document.getElementById('clear-btn');
+        const errorMessage = document.getElementById('error-message');
+        const resultsContainer = document.getElementById('results-container');
+        const contentDisplay = document.getElementById('content-display');
+        const loadingOverlay = document.getElementById('loading-overlay');
+        const progressBar = document.getElementById('progress-bar');
+        
         // Random website selection
         randomBtn.addEventListener('click', () => {
             const randomIndex = Math.floor(Math.random() * sampleWebsites.length);
@@ -920,7 +1701,7 @@ main {
             errorMessage.classList.add('hidden');
             showToast('Random URL generated', 'success');
         });
-
+        
         // Format URL
         function formatUrl(inputUrl) {
             if (!inputUrl.match(/^[a-zA-Z]+:\/\//)) {
@@ -928,7 +1709,7 @@ main {
             }
             return inputUrl;
         }
-
+        
         // Generate sample content
         function generateSampleContent(url) {
             const cleanUrl = url.replace(/(^\w+:|^)\/\//, '').replace(/\/$/, '');
@@ -1007,7 +1788,7 @@ Extraction Details:
 - Language: English
 - Word Count: ${Math.floor(Math.random() * 200) + 200}`;
         }
-
+        
         // Simulate progress
         function simulateProgress() {
             let progress = 0;
@@ -1020,9 +1801,8 @@ Extraction Details:
                 }
             }, 200);
         }
-
+        
         // Extract button handler
-    // Extract button handler - WORKING IMPLEMENTATION
         extractBtn.addEventListener('click', async () => {
             const url = urlInput.value.trim();
             
@@ -1107,6 +1887,7 @@ Extraction Details:
                 progressBar.style.width = '0%';
             }
         });
+        
         // Copy button handler
         copyBtn.addEventListener('click', async () => {
             try {
@@ -1153,6 +1934,201 @@ Extraction Details:
             } else {
                 errorMessage.classList.add('hidden');
             }
+        });
+        
+        // ========== Data Extractor ==========
+        // DOM Elements for Data Extractor
+        const inputText = document.getElementById('input-text');
+        const clearInputBtn = document.getElementById('clear-input-btn');
+        const dataResultsContainer = document.getElementById('data-results-container');
+        const dataResultsDisplay = document.getElementById('data-results-display');
+        const dataResultsCount = document.getElementById('data-results-count');
+        const saveDataBtn = document.getElementById('save-data-btn');
+        const copyAllBtn = document.getElementById('copy-all-btn');
+        const extractionOptions = document.querySelectorAll('.extraction-option');
+        
+        // Selected extraction type
+        let selectedType = 'servers';
+        
+        // Type names for display
+        const typeNames = {
+            servers: 'Servers',
+            ips: 'IP Addresses',
+            emails: 'Emails',
+            domains: 'Domains'
+        };
+        
+        const patterns = {
+            servers: /(?:^|[^a-zA-Z])([ls]?_[\w-]+|[\w-]+_srv\d*)/gi,
+            ips: /(\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b)/g,
+            emails: /([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)/gi,
+            domains: /([a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z]{2,})+)/gi
+        };
+        
+        // Extract data based on selected type
+        function extractData(text, type) {
+            const matches = text.match(patterns[type]);
+            return matches ? [...new Set(matches)] : []; // Remove duplicates
+        }
+        
+        // Format results for display
+        function formatDataResults(results, type) {
+            if (results.length === 0) {
+                return `No ${typeNames[type]} found in the input text.`;
+            }
+            return results.join('<br>');
+        }
+        
+        // Update extraction results
+        function updateExtractionResults() {
+            const text = inputText.value.trim();
+            
+            if (!text) {
+                dataResultsContainer.classList.add('hidden');
+                return;
+            }
+            
+            // Extract data
+            const results = extractData(text, selectedType);
+            
+            // Update UI
+            dataResultsDisplay.innerHTML = formatDataResults(results, selectedType);
+            dataResultsCount.textContent = `${results.length} ${typeNames[selectedType]} found`;
+            
+            // Show results
+            dataResultsContainer.classList.remove('hidden');
+        }
+        
+        // Set up extraction option selection
+        extractionOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                extractionOptions.forEach(opt => opt.classList.remove('active'));
+                option.classList.add('active');
+                selectedType = option.dataset.type;
+                updateExtractionResults();
+            });
+        });
+        
+        // Automatic extraction on input
+        inputText.addEventListener('input', () => {
+            clearInputBtn.classList.toggle('hidden', !inputText.value.trim());
+            updateExtractionResults();
+        });
+        
+        // Clear input button
+        clearInputBtn.addEventListener('click', () => {
+            inputText.value = '';
+            clearInputBtn.classList.add('hidden');
+            dataResultsContainer.classList.add('hidden');
+            inputText.focus();
+        });
+        
+        // Save results button
+        saveDataBtn.addEventListener('click', () => {
+            const blob = new Blob([dataResultsDisplay.textContent], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `extracted-${selectedType}-${new Date().toISOString().slice(0,10)}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showToast('Download started', 'success');
+        });
+        
+            copyAllBtn.addEventListener('click', async () => {
+            try {
+                // Get text content and clean it up
+                const rawText = dataResultsDisplay.textContent;
+                // Remove extra whitespace and create clean line breaks
+                const cleanText = rawText.split('\n')
+                    .map(line => line.trim())
+                    .filter(line => line.length > 0)
+                    .join('\n');
+                    
+                await navigator.clipboard.writeText(cleanText);
+                copyAllBtn.innerHTML = `<i class="fas fa-check"></i><span>Copied!</span>`;
+                showToast('All results copied to clipboard!', 'success');
+                
+                setTimeout(() => {
+                    copyAllBtn.innerHTML = `<i class="fas fa-copy"></i><span>Copy All</span>`;
+                }, 2000);
+            } catch (err) {
+                showToast('Failed to copy results', 'error');
+            }
+        });
+         // Format results for display with individual copy buttons
+        function formatDataResults(results, type) {
+            if (results.length === 0) {
+                return `<div class="text-center py-2">No ${typeNames[type]} found in the input text.</div>`;
+            }
+            
+            return results.map(item => `
+                <div class="result-item">
+                    <span>${item}</span>
+                    <button class="copy-item-btn" data-item="${item}">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                </div>
+            `).join('');
+        }
+
+           // Update extraction results
+        function updateExtractionResults() {
+            const text = inputText.value.trim();
+            
+            if (!text) {
+                dataResultsContainer.classList.add('hidden');
+                return;
+            }
+            
+            // Extract data
+            const results = extractData(text, selectedType);
+            
+            // Update UI
+            dataResultsDisplay.innerHTML = formatDataResults(results, selectedType);
+
+            // Update results count
+            dataResultsCount.textContent = `${results.length} ${typeNames[selectedType]} found`;
+            
+            // Add event listeners to all copy buttons
+            document.querySelectorAll('.copy-item-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const item = this.getAttribute('data-item');
+                    navigator.clipboard.writeText(item).then(() => {
+                        // Visual feedback
+                        this.innerHTML = '<i class="fas fa-check"></i>';
+                        this.classList.add('copied');
+                        showToast('Copied to clipboard!', 'success');
+                        
+                        // Reset after 2 seconds
+                        setTimeout(() => {
+                            this.innerHTML = '<i class="fas fa-copy"></i>';
+                            this.classList.remove('copied');
+                        }, 2000);
+                    }).catch(err => {
+                        showToast('Failed to copy', 'error');
+                    });
+                });
+            });
+            
+            // Show results
+            dataResultsContainer.classList.remove('hidden');
+        }
+         inputText.addEventListener('input', () => {
+            clearInputBtn.classList.toggle('hidden', !inputText.value.trim());
+            updateExtractionResults();
+        });
+        
+        // Clear input button handler
+        clearInputBtn.addEventListener('click', () => {
+            inputText.value = '';
+            clearInputBtn.classList.add('hidden');
+            dataResultsContainer.classList.add('hidden');
+            inputText.focus();
+            showToast('Input cleared', 'info');
         });
     </script>
 </body>
